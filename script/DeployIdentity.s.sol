@@ -7,7 +7,7 @@ import "./HelperConfig.s.sol";
 
 contract DeployIdentity is Script{
     function run() public {
-        HelperConfig helper = new Helperonfig();
+        HelperConfig helper = new HelperConfig();
         HelperConfig.NetworkConfig memory config  = helper.getConfig();
 
         vm.startBroadcast();
