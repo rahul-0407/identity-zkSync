@@ -31,9 +31,9 @@ A decentralized identity verification system built on blockchain using zkSync. U
 ---
 
 ## 📁 Project Structure
-
--self-sovereign-id/
--├── contracts/ # Solidity smart contracts
+```
+self-sovereign-id/
+├── contracts/ # Solidity smart contracts
 ├── frontend/ # React-based frontend (Vite)
 │ ├── components/ # Reusable UI components
 │ ├── pages/ # Auth, Upload, Verify pages
@@ -44,6 +44,7 @@ A decentralized identity verification system built on blockchain using zkSync. U
 ├── foundry.toml # Foundry config
 ├── deploy/ # Deployment scripts
 └── README.md # This file
+```
 
 ## ⚙️ Getting Started
 
