@@ -32,8 +32,8 @@ A decentralized identity verification system built on blockchain using zkSync. U
 
 ## 📁 Project Structure
 
-self-sovereign-id/
-├── contracts/ # Solidity smart contracts
+-self-sovereign-id/
+-├── contracts/ # Solidity smart contracts
 ├── frontend/ # React-based frontend (Vite)
 │ ├── components/ # Reusable UI components
 │ ├── pages/ # Auth, Upload, Verify pages
@@ -54,15 +54,78 @@ self-sovereign-id/
 - MetaMask or WalletConnect supported wallet
 - zkSync or Sepolia testnet ETH
 
-### 1. Clone the Repo
+- 
+## 🛠️ Setup Instructions
 
-```bash
-git clone https://github.com/yourusername/self-sovereign-id.git
-cd self-sovereign-id
+1. **Clone the Repository**:
+   ```bash
+   git clone https://github.com/yourusername/self-sovereign-id.git
+   cd self-sovereign-id
+
+2. **Install Frontend Dependencies**:
+   ```bash
+   cd frontend
+   npm install
+
+3. **Compile and Test Contracts**:
+   ```bash
+   forge build
+   forge test
 
 
+4. **Deploy Contract (to zkSync or Sepolia)**:
+   ```bash
+   # Example with Foundry
+   forge script script/Deploy.s.sol:DeployScript --rpc-url <RPC_URL> --private-key <PRIVATE_KEY> --broadcast
 
 
+5. **Run the Frontend**:
+   ```bash
+   cd frontend
+   npm run dev
+
+## 👥 Roles
+
+### 🧑 User Side
+
+- Connect wallet
+- Upload identity document (hashed)
+- Generate QR code for verifier
+
+### 🕵️ Verifier Side
+
+- Scan QR code
+- View on-chain proof (optionally using OTP access)
+- Trustless document verification
+
+## 🔒 Security & Privacy
+
+- Only document hashes are stored on-chain — not the actual documents
+- Future support planned for zk-SNARKs / zero-knowledge proofs
+- QR codes can optionally include time-sensitive OTP tokens for added security
+
+## 📦 Dependencies
+
+### 📝 Contracts
+
+- `solidity ^0.8.x`
+- `@chainlink/contracts` — for optional VRF-based randomness (e.g., OTP)
+
+### 💻 Frontend
+
+- `react`, `react-router-dom`, `tailwindcss`
+- `ethers` — Ethereum interaction
+- `@web3modal/ethereum`, `@web3modal/react`, `web3modal` — Wallet connection (MetaMask, WalletConnect)
+
+## 📜 License
+MIT License
+
+## ✨ Future Enhancements
+
+- zk-SNARK integration for advanced zero-knowledge proof functionality
+- Decentralized storage solutions (e.g., IPFS/Filecoin)
+- Mobile-friendly UI for better user experience
+- Email/Phone verification integration for multi-factor authentication
 
 
 ## Foundry
