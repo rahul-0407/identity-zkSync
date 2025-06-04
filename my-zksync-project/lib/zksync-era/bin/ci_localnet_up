@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+set -e
+
+cd $ZKSYNC_HOME
+
+run_retried docker-compose pull
+docker-compose --profile runner up -d --wait

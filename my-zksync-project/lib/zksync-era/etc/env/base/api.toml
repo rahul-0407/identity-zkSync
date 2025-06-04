@@ -1,0 +1,37 @@
+# Configuration for the core API servers.
+
+
+# Configuration for the web3 JSON RPC server
+[api.web3_json_rpc]
+# Port for the HTTP RPC API.
+http_port = 3050
+http_url = "http://127.0.0.1:3050"
+# Port for the WebSocket RPC API.
+ws_port = 3051
+ws_url = "ws://127.0.0.1:3051"
+req_entities_limit = 10000
+filters_disabled = false
+filters_limit = 10000
+subscriptions_limit = 10000
+# Interval between polling db for pubsub (in ms).
+pubsub_polling_interval = 200
+threads_per_server = 128
+max_nonce_ahead = 50
+gas_price_scale_factor = 1.2
+estimate_gas_scale_factor = 1.2
+estimate_gas_acceptable_overestimation = 1000
+max_tx_size = 1000000
+
+# Configuration for the prometheus exporter server.
+[api.prometheus]
+listener_port = 3312
+pushgateway_url = "http://127.0.0.1:9091"
+push_interval_ms = 100
+
+# Configuration for the healtcheck server.
+[api.healthcheck]
+port = 3071
+
+# Configuration for the Merkle tree API server
+[api.merkle_tree]
+port = 3072

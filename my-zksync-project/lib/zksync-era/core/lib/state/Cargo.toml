@@ -1,0 +1,34 @@
+[package]
+name = "zksync_state"
+description = "ZKsync state keeper state"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+homepage.workspace = true
+repository.workspace = true
+license.workspace = true
+keywords.workspace = true
+categories.workspace = true
+
+[dependencies]
+vise.workspace = true
+zksync_dal.workspace = true
+zksync_types.workspace = true
+zksync_shared_metrics.workspace = true
+zksync_storage.workspace = true
+zksync_vm_interface.workspace = true
+
+anyhow.workspace = true
+async-trait.workspace = true
+mini-moka.workspace = true
+tokio = { workspace = true, features = ["rt"] }
+tracing.workspace = true
+itertools.workspace = true
+once_cell.workspace = true
+backon.workspace = true
+
+[dev-dependencies]
+assert_matches.workspace = true
+rand.workspace = true
+tempfile.workspace = true
+test-casing.workspace = true

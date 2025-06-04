@@ -1,0 +1,42 @@
+import React,{ useContext,  } from 'react'
+import { NavLink, Link } from "react-router-dom";
+import { TestContext } from "../context/TestContext";
+
+
+const Navbar = () => {
+
+    const {walletAddress, setWalletAddress} = useContext(TestContext);
+
+    return (
+        <nav className="fixed top-0 left-0 z-500 flex w-full bg-[rgba(0,0,0,0)] items-center justify-between  border-b border-neutral-200 px-4 py-4 dark:border-neutral-800 backblur">
+          <Link to={"/"} className="flex items-center gap-2">
+            <div className="size-7 rounded-full bg-gradient-to-br from-violet-500 to-pink-500" />
+            <h1 className="text-base font-bold md:text-2xl text-white">
+              Identity 3
+            </h1>
+          </Link>
+          <div className="flex gap-4 py-[15px] px-[28px] text-white text-sm backdrop1 bg-[rgba(20,20,20,0.55)] rounded-4xl border-solid border-1 border-[rgba(135,135,135,0.16)] items-center">
+            <NavLink to="/document">
+              <p>Document</p>
+            </NavLink>
+            <NavLink to="/about">
+              <p>About</p>
+            </NavLink>
+            <NavLink to="/contact">
+              <p>Contact</p>
+            </NavLink>
+            <NavLink to="/privacy-policy">
+              <p>Privacy Policy</p>
+            </NavLink>
+            <NavLink to="/terms-of-use">
+              <p>Terms of Use</p>
+            </NavLink>
+          </div>
+          <button className="w-24 transform rounded-lg bg-black px-6 py-2 font-medium text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-gray-800 md:w-32 dark:bg-[rgba(79,82,255,0.92)] dark:hover:bg-[rgba(68,51,255)] dark:text-white  box dark">
+            {walletAddress ? walletAddress : "Connect"}
+          </button>
+        </nav>
+      );
+}
+
+export default Navbar

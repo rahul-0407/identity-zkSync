@@ -1,0 +1,22 @@
+[package]
+name = "system-constants-generator"
+description = "Tool for generating JSON files with the system constants for L1/L2 contracts"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+homepage.workspace = true
+license.workspace = true
+keywords.workspace = true
+categories.workspace = true
+publish = false
+
+[dependencies]
+zksync_types.workspace = true
+zksync_utils.workspace = true
+zksync_contracts.workspace = true
+zksync_multivm.workspace = true
+
+codegen.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+once_cell.workspace = true

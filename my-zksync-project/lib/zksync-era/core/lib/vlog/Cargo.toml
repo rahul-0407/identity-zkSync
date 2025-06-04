@@ -1,0 +1,40 @@
+[package]
+name = "zksync_vlog"
+description = "ZKsync observability stack"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+homepage.workspace = true
+repository.workspace = true
+license.workspace = true
+keywords.workspace = true
+categories.workspace = true
+
+[dependencies]
+anyhow.workspace = true
+chrono = { workspace = true, default-features = false, features = ["now"] }
+tokio.workspace = true
+tracing.workspace = true
+tracing-subscriber = { workspace = true, features = [
+    "fmt",
+    "env-filter",
+    "time",
+    "json",
+] }
+tracing-opentelemetry.workspace = true
+time.workspace = true
+thiserror.workspace = true
+sentry.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+opentelemetry = { workspace = true, features = ["trace"] }
+opentelemetry_sdk = { workspace = true, features = [ "rt-tokio" ] }
+opentelemetry-otlp = { workspace = true, features = [
+    "http-proto",
+    "reqwest-client",
+] }
+opentelemetry-semantic-conventions.workspace = true
+opentelemetry-appender-tracing.workspace = true
+vise.workspace = true
+vise-exporter.workspace = true
+url.workspace = true

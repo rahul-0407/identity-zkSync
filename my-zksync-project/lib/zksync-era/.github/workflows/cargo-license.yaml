@@ -1,0 +1,12 @@
+name: Cargo license check
+on: pull_request
+jobs:
+  cargo-deny:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+    - uses: EmbarkStudios/cargo-deny-action@8d73959fce1cdc8989f23fdf03bec6ae6a6576ef # v2.0.7
+      with:
+        manifest-path: "./core/Cargo.toml"
+        command: check
+        command-arguments: "--hide-inclusion-graph"
