@@ -83,11 +83,11 @@ const Document = () => {
       color: "from-yellow-500 to-orange-600",
     },
   ]
-  // const wallet = localStorage.getItem("address");
+  const wallet = localStorage.getItem("address");
 
-  // if (!wallet) {
-  //   return <Navigate to="/login" replace />;
-  // }
+  if (!wallet) {
+    return <Navigate to="/login" replace />;
+  }
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
 
