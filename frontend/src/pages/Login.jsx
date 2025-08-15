@@ -8,7 +8,7 @@ import {
   Clock,
   AlertCircle,
 } from "lucide-react";
-import { Link,useNavigate,Navigate } from "react-router-dom";
+import { Link, useNavigate, Navigate } from "react-router-dom";
 import { TestContext } from "../context/TestContext";
 
 // Reduced to just 4 wallet options
@@ -45,7 +45,7 @@ const wallets = [
 ];
 
 const LoginPage = () => {
-    const navigate = useNavigate()
+  const navigate = useNavigate();
   const {
     selectedWallet,
     isConnecting,
@@ -62,12 +62,12 @@ const LoginPage = () => {
     return <Navigate to="/document" replace />;
   }
 
-//   useEffect(() => {
-//     const wallet = localStorage.getItem("address")
-//     if (wallet) {
-//       navigate("/document")
-//     }
-//   }, [navigate])
+  //   useEffect(() => {
+  //     const wallet = localStorage.getItem("address")
+  //     if (wallet) {
+  //       navigate("/document")
+  //     }
+  //   }, [navigate])
 
   // Check for MetaMask on component mount
   useEffect(() => {
@@ -86,20 +86,19 @@ const LoginPage = () => {
 
   const handleWalletConnect = async (walletId) => {
     if (walletId !== "metamask") return;
-  
+
     setError(null);
     setSelectedWallet(walletId);
-  
+
     const success = await connect(); // This handles isConnecting internally
-  
+
     if (success) {
       window.location.href = "/document"; // Redirect after spinner stops
     } else {
       setError("Failed to connect. Please try again.");
       setSelectedWallet(null);
     }
-  }
-  
+  };
 
   const installMetaMask = () => {
     window.open("https://metamask.io/download/", "_blank");

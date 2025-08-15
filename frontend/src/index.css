@@ -32,3 +32,14 @@
     @apply rounded-xl shadow-lg;
     background: linear-gradient(145deg, rgb(125, 125, 125) 0%, rgb(66, 66, 66) 34%, rgb(20, 22, 64) 74%);
   }
+
+  /* Hide scrollbar for Chrome, Safari, and Opera */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge, and Firefox */
+.hide-scrollbar {
+  -ms-overflow-style: none;  /* IE & Edge */
+  scrollbar-width: none;     /* Firefox */
+}

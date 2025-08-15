@@ -1,0 +1,41 @@
+import { useState, useEffect } from "react";
+import QRCode from "qrcode.react";
+import axios from "axios";
+
+export default function Dashboard({ ownerAddress }) {
+    const [docs, setDocs] = useState([]);
+    const [qrFor, setQrFor] = useState(null);
+
+    useEffect(() => {
+        axios.get(`http://localhost:5000/api/auth/v1/documents/${ownerAddress}`)
+            .then(res => {
+                if (res.data.success) {
+                    setDocs(res.data.documents);
+                }
+            })
+            .catch(err => console.error(err));
+    }, [ownerAddress]);
+
+    return (
+        <div>
+            <h2>Your Documents</h2>
+            {docs.map(doc => (
+                <div key={doc._id} style={{ marginBottom: "20px" }}>
+                    <p><b>Type:</b> {doc.documentType}</p>
+                    <p><b>Filename:</b> {doc.fileName}</p>
+                    <p><b>Uploaded:</b> {new Date(doc.timestamp).toLocaleString()}</p>
+                    
+                    <button onClick={() => setQrFor(doc._id)}>
+                        Show QR
+                    </button>
+
+                    {qrFor === doc._id && (
+                        <div style={{ marginTop: "10px" }}>
+                            <QRCode value={`${window.location.origin}/verify/${doc.hash}`} />
+                        </div>
+                    )}
+                </div>
+            ))}
+        </div>
+    );
+}

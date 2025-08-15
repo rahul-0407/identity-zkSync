@@ -19,11 +19,11 @@ const Navbar = () => {
             <NavLink to="/document">
               <p>Document</p>
             </NavLink>
-            <NavLink to="/about">
-              <p>About</p>
+            <NavLink to="/verifier">
+              <p>Verifier</p>
             </NavLink>
-            <NavLink to="/contact">
-              <p>Contact</p>
+            <NavLink to="/owner">
+              <p>Owner</p>
             </NavLink>
             <NavLink to="/privacy-policy">
               <p>Privacy Policy</p>

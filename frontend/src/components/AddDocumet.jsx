@@ -1,89 +1,113 @@
-"use client"
+"use client";
 
-import { useState, useRef } from "react"
-import { Upload, FileText, X } from "lucide-react"
+import { useState, useRef } from "react";
+import { Upload, FileText, X } from "lucide-react";
+import { getContract } from "../utils/contract";
+
+const documentCategories = {
+  Medical: ["Medical Certificate", "Health Report", "Prescription"],
+  License: ["Driving License", "Pilot License", "Fishing License"],
+  Card: ["Aadhar Card", "PAN Card", "Voter Card"],
+  Passport: ["Passport"],
+  Certificates: [
+    "Degree Certificate",
+    "Training Certificate",
+    "Experience Certificate",
+  ],
+  Finance: ["ITR", "Bank Statement", "Financial Statement"],
+};
 
 // 4. MODAL RECEIVES PROPS: isOpen and onClose
 export function AddDocumentModal({ isOpen, onClose }) {
-  const [documentName, setDocumentName] = useState("")
-  const [selectedFile, setSelectedFile] = useState(null)
-  const [dragActive, setDragActive] = useState(false)
-  const [isUploading, setIsUploading] = useState(false)
-  const fileInputRef = useRef(null)
+  const [documentType, setDocumentType] = useState("");
+  const [documentName, setDocumentName] = useState("");
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [dragActive, setDragActive] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef(null);
+
+  const allowedTypes = ["application/pdf", "image/png", "image/jpeg"];
 
   // 5. CONDITIONAL RENDERING: If isOpen is false, return nothing
-  if (!isOpen) return null
+  if (!isOpen) return null;
 
   const handleDrag = (e) => {
-    e.preventDefault()
-    e.stopPropagation()
+    e.preventDefault();
+    e.stopPropagation();
     if (e.type === "dragenter" || e.type === "dragover") {
-      setDragActive(true)
+      setDragActive(true);
     } else if (e.type === "dragleave") {
-      setDragActive(false)
+      setDragActive(false);
     }
-  }
+  };
 
   const handleDrop = (e) => {
-    e.preventDefault()
-    e.stopPropagation()
-    setDragActive(false)
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      const file = e.dataTransfer.files[0]
-      if (file.type === "application/pdf") {
-        setSelectedFile(file)
+      const file = e.dataTransfer.files[0];
+      if (allowedTypes.includes(file.type)) {
+        setSelectedFile(file);
       } else {
-        alert("Please select a PDF file only.")
+        alert("Please select a PDF, PNG, or JPG file.");
       }
     }
-  }
+  };
 
   const handleFileChange = (e) => {
     if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0]
-      if (file.type === "application/pdf") {
-        setSelectedFile(file)
+      const file = e.target.files[0];
+      if (allowedTypes.includes(file.type)) {
+        setSelectedFile(file);
       } else {
-        alert("Please select a PDF file only.")
-        e.target.value = ""
+        alert("Please select a PDF, PNG, or JPG file.");
+        e.target.value = "";
       }
     }
-  }
+  };
 
   const handleUpload = async () => {
-    if (!documentName.trim() || !selectedFile) {
-      alert("Please enter a document name and select a PDF file.")
-      return
+    if (!documentType || !documentName || !selectedFile) {
+      alert("Please fill in all fields and select a valid file.");
+      return;
     }
-    setIsUploading(true)
+    setIsUploading(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 2000))
-      console.log("Uploading:", { name: documentName, file: selectedFile })
-      setDocumentName("")
-      setSelectedFile(null)
-      onClose() // 6. CLOSE MODAL: Calls onClose which sets state to false
-      alert("Document uploaded successfully!")
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      console.log("Uploading:", {
+        type: documentType,
+        name: documentName,
+        file: selectedFile,
+      });
+      setDocumentType("");
+      setDocumentName("");
+      setSelectedFile(null);
+      onClose();
+      alert("Document uploaded successfully!");
     } catch (error) {
-      alert("Upload failed. Please try again.")
+      alert("Upload failed. Please try again.");
     } finally {
-      setIsUploading(false)
+      setIsUploading(false);
     }
-  }
+  };
 
   const removeFile = () => {
-    setSelectedFile(null)
+    setSelectedFile(null);
     if (fileInputRef.current) {
-      fileInputRef.current.value = ""
+      fileInputRef.current.value = "";
     }
-  }
+  };
 
   const formatFileSize = (bytes) => {
-    if (bytes === 0) return "0 Bytes"
-    const k = 1024
-    const sizes = ["Bytes", "KB", "MB", "GB"]
-    const i = Math.floor(Math.log(bytes) / Math.log(k))
-    return Number.parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i]
-  }
+    if (bytes === 0) return "0 Bytes";
+    const k = 1024;
+    const sizes = ["Bytes", "KB", "MB", "GB"];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return (
+      Number.parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i]
+    );
+  };
 
   // 7. MODAL RENDERS: Only when isOpen is true
   return (
@@ -92,7 +116,10 @@ export function AddDocumentModal({ isOpen, onClose }) {
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
       <div className="relative w-full max-w-md mx-4 bg-gray-900 border border-gray-700 rounded-lg shadow-2xl">
-        <button onClick={onClose} className="absolute right-4 top-4 text-gray-400 hover:text-white transition-colors">
+        <button
+          onClick={onClose}
+          className="absolute right-4 top-4 text-gray-400 hover:text-white transition-colors"
+        >
           <X className="h-4 w-4" />
         </button>
 
@@ -100,34 +127,70 @@ export function AddDocumentModal({ isOpen, onClose }) {
           <div className="mb-6">
             <div className="flex items-center gap-2 mb-2">
               <Upload className="w-5 h-5 text-blue-400" />
-              <h2 className="text-lg font-semibold text-white">Add New Document</h2>
+              <h2 className="text-lg font-semibold text-white">
+                Add New Document
+              </h2>
             </div>
-            <p className="text-sm text-gray-400">Upload a PDF document to your secure digital identity vault.</p>
+            <p className="text-sm text-gray-400">
+              Upload a PDF document to your secure vault.
+            </p>
           </div>
 
+          {/* First Dropdown: Document Type */}
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-white mb-2">
+              Document Type
+            </label>
+            <select
+              value={documentType}
+              onChange={(e) => {
+                setDocumentType(e.target.value);
+                setDocumentName(""); // Reset second dropdown when type changes
+              }}
+              className="w-full h-10 px-3 bg-gray-800 border border-gray-600 rounded-md text-white"
+            >
+              <option value="">Select Type</option>
+              {Object.keys(documentCategories).map((type) => (
+                <option key={type} value={type}>
+                  {type}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Second Dropdown: Document Name */}
           <div className="mb-6">
-            <label htmlFor="document-name" className="block text-sm font-medium text-white mb-2">
+            <label className="block text-sm font-medium text-white mb-2">
               Document Name
             </label>
-            <input
-              id="document-name"
-              type="text"
-              placeholder="Enter document name (e.g., Passport, License)"
+            <select
               value={documentName}
               onChange={(e) => setDocumentName(e.target.value)}
-              className="w-full h-10 px-3 py-2 bg-gray-800 border border-gray-600 rounded-md text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
+              disabled={!documentType}
+              className="w-full h-10 px-3 bg-gray-800 border border-gray-600 rounded-md text-white disabled:opacity-50"
+            >
+              <option value="">Select Document</option>
+              {documentType &&
+                documentCategories[documentType].map((doc) => (
+                  <option key={doc} value={doc}>
+                    {doc}
+                  </option>
+                ))}
+            </select>
           </div>
 
+          {/* File Upload */}
           <div className="mb-6">
-            <label className="block text-sm font-medium text-white mb-2">Upload PDF Document</label>
+            <label className="block text-sm font-medium text-white mb-2">
+              Upload PDF Document
+            </label>
             <div
               className={`relative border-2 border-dashed rounded-lg p-6 transition-all duration-200 ${
                 dragActive
                   ? "border-blue-400 bg-blue-400/10"
                   : selectedFile
-                    ? "border-green-400 bg-green-400/10"
-                    : "border-gray-600 bg-gray-800/50"
+                  ? "border-green-400 bg-green-400/10"
+                  : "border-gray-600 bg-gray-800/50"
               }`}
               onDragEnter={handleDrag}
               onDragLeave={handleDrag}
@@ -138,13 +201,16 @@ export function AddDocumentModal({ isOpen, onClose }) {
                 <div className="text-center">
                   <Upload className="mx-auto h-12 w-12 text-gray-400 mb-4" />
                   <div className="text-white mb-2">
-                    <span className="font-medium">Click to upload</span> or drag and drop
+                    <span className="font-medium">Click to upload</span> or drag
+                    and drop
                   </div>
-                  <p className="text-sm text-gray-400">PDF files only (Max 10MB)</p>
+                  <p className="text-sm text-gray-400">
+                    PDF files only (Max 10MB)
+                  </p>
                   <input
                     ref={fileInputRef}
                     type="file"
-                    accept=".pdf,application/pdf"
+                    accept=".pdf,application/pdf,image/png,image/jpeg"
                     onChange={handleFileChange}
                     className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                   />
@@ -156,8 +222,12 @@ export function AddDocumentModal({ isOpen, onClose }) {
                       <FileText className="w-5 h-5 text-red-400" />
                     </div>
                     <div>
-                      <p className="text-white font-medium">{selectedFile.name}</p>
-                      <p className="text-sm text-gray-400">{formatFileSize(selectedFile.size)}</p>
+                      <p className="text-white font-medium">
+                        {selectedFile.name}
+                      </p>
+                      <p className="text-sm text-gray-400">
+                        {formatFileSize(selectedFile.size)}
+                      </p>
                     </div>
                   </div>
                   <button
@@ -171,6 +241,7 @@ export function AddDocumentModal({ isOpen, onClose }) {
             </div>
           </div>
 
+          {/* Buttons */}
           <div className="flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2 gap-2">
             <button
               onClick={onClose}
@@ -180,7 +251,13 @@ export function AddDocumentModal({ isOpen, onClose }) {
             </button>
             <button
               onClick={handleUpload}
-              disabled={!documentName.trim() || !selectedFile || isUploading}
+              disabled={
+                !documentType.trim() ||   // must have selected type
+                !documentName.trim() ||   // must have selected sub-type
+                !selectedFile ||          // must have selected file
+                isUploading
+              }
+                         
               className="px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white rounded-md transition-colors flex items-center justify-center gap-2"
             >
               {isUploading ? (
@@ -199,5 +276,5 @@ export function AddDocumentModal({ isOpen, onClose }) {
         </div>
       </div>
     </div>
-  )
+  );
 }

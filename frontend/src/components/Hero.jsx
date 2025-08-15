@@ -15,6 +15,10 @@ import { TestContext } from "../context/TestContext";
 function Hero() {
   const {walletAddress, setWalletAddress,connect} = useContext(TestContext);
 
+  function shortAddress(addr) {
+    return addr ? `${addr.slice(0, 6)}...${addr.slice(-4)}` : "";
+  }
+
 
   return (
     <>
@@ -77,7 +81,7 @@ function Hero() {
             >
               <MetamaskIcon style={{ width: 32, height: 32 }} />
               {walletAddress
-                ? `Connected: ${walletAddress}`
+                ? `Connected: ${shortAddress(walletAddress)}`
                 : "Connect Metamask"}
             </button>
             <button className="w-60 transform rounded-lg border border-gray-300 bg-white px-6 py-2 font-medium text-black transition-all duration-300 hover:-translate-y-0.5 hover:bg-gray-100 dark:border-gray-700 dark:bg-black dark:text-white dark:hover:bg-gray-900">
