@@ -2,9 +2,9 @@ import React, { useState, useRef } from "react";
 import { Camera, Upload, QrCode, CheckCircle, Scan } from "lucide-react";
 import VerificationHistory from "../components/VerificationHistory";
 import { getContract } from "../utils/contract";
-import axios from "axios"
+import axios from "axios";
 import { ethers } from "ethers";
-import QrScanner  from "qr-scanner"
+import QrScanner from "qr-scanner";
 
 const VerifierPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -16,73 +16,62 @@ const VerifierPage = () => {
 
   const successAudioRef = useRef(null);
 
-  const startScan = async () => {
-    try {
+const startScan = async () => {
+  try {
+    setIsModalOpen(true);
+    setIsProcessing(true);
+    setIsSuccess(false);
 
-      navigator.mediaDevices.enumerateDevices()
-  .then(devices => {
-    console.log(devices);
-  })
-  .catch(err => {
-    console.error("Error listing devices:", err);
-  });
-      // Check if browser supports camera API
-      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        alert("Camera API not supported in this browser");
-        return;
+    // Create a video element for scanning
+    const videoElem = document.createElement("video");
+    videoElem.style.width = "100%";
+    videoElem.style.borderRadius = "12px";
+    document.body.appendChild(videoElem);
+
+    const scanner = new QrScanner(
+      videoElem, // must be a <video> element
+      async (result) => {
+        console.log("QR Scanned:", result?.data || result);
+        scanner.stop();
+        videoElem.remove();
+        await handleScanOrUpload(result?.data?.trim() || result.trim());
       }
-  
-      // List all cameras
-      const cameras = await QrScanner.listCameras(true);
-      if (!cameras.length) {
-        throw new Error("No camera devices found");
-      }
-  
-      console.log("Available cameras:", cameras);
-  
-      // Pick first available camera
-      const preferredCamera = cameras[0].id;
-  
-      const videoElem = document.createElement("video");
-      videoElem.style.width = "100%"; // Optional preview styling
-      document.body.appendChild(videoElem);
-  
-      const scanner = new QrScanner(
-        videoElem,
-        (result) => {
-          console.log("QR Result:", result?.data || result);
-          scanner.stop();
-          videoElem.remove();
-          // handleScanOrUpload(result?.data?.trim() || result.trim());
-        },
-        {
-          preferredCamera: preferredCamera, // Pick actual available camera
-          returnDetailedScanResult: true,
-        }
-      );
-  
-      await scanner.start();
-    } catch (err) {
-      console.error(err);
-      alert("Error starting camera scan: " + (err.message || err));
-    }
-  };
+    );
+
+    await scanner.start();
+  } catch (err) {
+    console.error(err);
+    setIsModalOpen(false);
+    setIsProcessing(false);
+    alert("Error starting scan: " + (err.message || err));
+  }
+};
+
+
 
   const handleFileUpload = async (event) => {
     try {
+      setIsModalOpen(true);
+      setIsProcessing(true);
+      setIsSuccess(false);
+
       const file = event.target.files[0];
-      if(!file) return;
+      if (!file) return;
 
       const qrContent = await QrScanner.scanImage(file);
       if (!qrContent) throw new Error("No QR code detected in image");
 
       console.log(qrContent);
+      
+      setIsProcessing(false)
+      setIsSuccess(true);
 
       // handleScanOrUpload(qrContent.trim());
     } catch (error) {
       alert("Error reading QR from image: " + err.message);
+      
     }
-  }
+  };
 
   const handleScanOrUpload = async (docId) => {
     try {
@@ -108,9 +97,9 @@ const VerifierPage = () => {
         ? metadata.hash
         : "0x" + metadata.hash;
 
-        if (normalizedHash.length !== 66) {
-          throw new Error("Invalid document hash format");
-        }
+      if (normalizedHash.length !== 66) {
+        throw new Error("Invalid document hash format");
+      }
 
       const bytes32Hash = ethers.getBytes(normalizedHash);
 
@@ -119,7 +108,7 @@ const VerifierPage = () => {
       if (!result) {
         throw new Error("Wallet not connected");
       }
-      const { contract } = result; 
+      const { contract } = result;
 
       const ownershipValid = await contract.verifyHash(
         bytes32Hash,
