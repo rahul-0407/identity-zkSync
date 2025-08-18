@@ -102,7 +102,10 @@ const VerifierPage = () => {
   const logQRResult = async (qrData) => {
     try {
       console.log("Sending QR to backend:", qrData);
-      await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/auth/v1/log-qr`, {qrData,});
+      const {res} = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/auth/v1/log-qr`, {qrData,});
+      if(res.success){
+        console.log(res.value)
+      }
       console.log("QR logged successfully");
     } catch (err) {
       console.error("Failed to log QR:", err);
