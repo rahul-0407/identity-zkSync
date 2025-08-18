@@ -59,7 +59,7 @@ const TestContextProvider = ({ children }) => {
 
     axios
       .get(`${import.meta.env.VITE_BACKEND_URL}/api/auth/v1/documents/${walletAddress}`)
-      .then((res) => {setDocuments(res.data.documents); console.log(res.data.documents)})
+      .then((res) => {setDocuments(res.data.documents); console.log(res.data.documents);console.log("Current backend URL:", import.meta.env.VITE_BACKEND_URL);})
       .catch(console.error);
   }, [walletAddress]);
 
