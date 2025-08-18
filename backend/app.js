@@ -9,7 +9,7 @@ import {errorMiddleware} from "./middlewares/error.js"
 
 const app = express();
 
-const allowedOrigins = ['http://localhost:5173','https://identity-zk-sync.vercel.app/']
+const allowedOrigins = ['http://localhost:5173','https://identity-zk-sync.vercel.app/','https://identity-zksync-1.onrender.com/']
 
 app.use(cors({
     origin: function (origin,callback){
