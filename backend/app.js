@@ -30,6 +30,12 @@ app.use('/api/verifications', verificationRoutes);
 
 
 
+app.get("/", (req, res) => {
+  res.send("index");
+});
+
+
+
 app.use(errorMiddleware);
 
 
