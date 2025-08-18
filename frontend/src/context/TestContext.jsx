@@ -57,11 +57,9 @@ const TestContextProvider = ({ children }) => {
   useEffect(() => {
     if (!walletAddress) return;
 
-    console.log("Current backend URL:", import.meta.env.VITE_BACKEND_URL)
-
     axios
       .get(`${import.meta.env.VITE_BACKEND_URL}/api/auth/v1/documents/${walletAddress}`)
-      .then((res) => {setDocuments(res.data.documents); console.log(res.data.documents);})
+      .then((res) => setDocuments(res.data.documents))
       .catch(console.error);
   }, [walletAddress]);
 
