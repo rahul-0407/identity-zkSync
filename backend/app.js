@@ -31,7 +31,7 @@ app.use('/api/verifications', verificationRoutes);
 
 
 app.get("/", (req, res) => {
-  res.send("index");
+  res.send("Working");
 });
 
 
