@@ -22,7 +22,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "ethers": "^6.15.0",
-    "html5-qrcode": "^2.3.8",
+    "html5-qrcode": "^2.2.7",
     "lucide-react": "^0.511.0",
     "motion": "^12.12.1",
     "qr-scanner": "^1.4.2",

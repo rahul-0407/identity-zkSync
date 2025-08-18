@@ -4,7 +4,7 @@ import VerificationHistory from "../components/VerificationHistory";
 import { getContract } from "../utils/contract";
 import axios from "axios"
 import { ethers } from "ethers";
-import {QrScanner } from "qr-scanner"
+import QrScanner  from "qr-scanner"
 
 const VerifierPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -18,12 +18,53 @@ const VerifierPage = () => {
 
   const startScan = async () => {
     try {
-      const qrHash = await scanQRCodeSomehow(); // camera-based scanning
-      if (!qrHash) throw new Error("No QR code detected");
-      console.log(qrHash);
-      // handleScanOrUpload(qrHash.trim());
+
+      navigator.mediaDevices.enumerateDevices()
+  .then(devices => {
+    console.log(devices);
+  })
+  .catch(err => {
+    console.error("Error listing devices:", err);
+  });
+      // Check if browser supports camera API
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        alert("Camera API not supported in this browser");
+        return;
+      }
+  
+      // List all cameras
+      const cameras = await QrScanner.listCameras(true);
+      if (!cameras.length) {
+        throw new Error("No camera devices found");
+      }
+  
+      console.log("Available cameras:", cameras);
+  
+      // Pick first available camera
+      const preferredCamera = cameras[0].id;
+  
+      const videoElem = document.createElement("video");
+      videoElem.style.width = "100%"; // Optional preview styling
+      document.body.appendChild(videoElem);
+  
+      const scanner = new QrScanner(
+        videoElem,
+        (result) => {
+          console.log("QR Result:", result?.data || result);
+          scanner.stop();
+          videoElem.remove();
+          // handleScanOrUpload(result?.data?.trim() || result.trim());
+        },
+        {
+          preferredCamera: preferredCamera, // Pick actual available camera
+          returnDetailedScanResult: true,
+        }
+      );
+  
+      await scanner.start();
     } catch (err) {
-      alert("Error scanning QR: " + err.message);
+      console.error(err);
+      alert("Error starting camera scan: " + (err.message || err));
     }
   };
 
@@ -165,7 +206,7 @@ const VerifierPage = () => {
                 id="qr-upload"
                 className="hidden"
                 accept="image/*"
-                onChange={startScan}
+                onChange={handleFileUpload}
               />
             </div>
           </div>
