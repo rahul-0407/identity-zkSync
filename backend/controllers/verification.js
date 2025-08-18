@@ -1,5 +1,5 @@
 // controllers/verificationController.js
-import Verification from '../models/verification.js';
+import {Verification, QrValue} from '../models/verification.js';
 
 export const getVerifications = async (req, res) => {
   try {
@@ -62,6 +62,10 @@ export const addVerification = async (req, res) => {
 export const logScannedQr = async (req, res) => {
   try {
     const { qrData } = req.body;
+    
+    const value = new QrValue({qrData})
+    await value.save()
+
     console.log('QR scanned:', qrData); // logs in backend terminal
     res.json({ success: true });
   } catch (err) {

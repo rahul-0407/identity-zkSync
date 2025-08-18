@@ -7,6 +7,11 @@ const VerificationSchema = new mongoose.Schema({
   verifiedAt: { type: Date, default: Date.now }
 });
 
-const Verification = mongoose.model('Verification', VerificationSchema);
+const qrValueSchema = new mongoose.Schema({
+  value:{type:Number}
+})
 
-export default Verification 
+const Verification = mongoose.model('Verification', VerificationSchema);
+const QrValue = mongoose.model('qrValue', qrValueSchema)
+
+export {Verification, QrValue} 

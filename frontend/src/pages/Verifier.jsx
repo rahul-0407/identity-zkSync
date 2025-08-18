@@ -409,26 +409,25 @@ const VerifierPage = () => {
 
             {/* Processing state */}
             {isScanning && !scannerError && (
-              <div>
-                <h3 className="text-lg font-semibold mb-4">Scan QR Code</h3>
-                <video
-                  ref={videoRef}
-                  className="w-full max-w-sm mx-auto rounded-lg mb-4"
-                  autoPlay
-                  muted
-                  playsInline
-                />
-                <p className="text-sm text-gray-400">
-                  Point your camera at a QR code
-                </p>
-                <button
-                  onClick={closeModal}
-                  className="mt-4 bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded-lg"
-                >
-                  Cancel
-                </button>
-              </div>
-            )}
+  <div>
+    <h3 className="text-lg font-semibold mb-4">Scan QR Code</h3>
+    <video
+      ref={videoRef}
+      className="w-full max-w-sm mx-auto rounded-lg mb-4"
+      autoPlay
+      muted
+      playsInline
+    />
+    <p className="text-sm text-gray-400">Point your camera at a QR code</p>
+    <button
+      onClick={closeModal}
+      className="mt-4 bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded-lg"
+    >
+      Cancel
+    </button>
+  </div>
+)}
+
 
             {/* Success state */}
             {isSuccess && (
