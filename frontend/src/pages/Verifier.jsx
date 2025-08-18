@@ -63,7 +63,8 @@ const VerifierPage = () => {
 
           setIsProcessing(true);
           const qrData = result?.data?.trim() || result.trim();
-          await handleScanOrUpload(qrData);
+          logQRResult(qrData)
+          // await handleScanOrUpload(qrData);
         },
         {
           onDecodeError: (error) => {
@@ -95,6 +96,18 @@ const VerifierPage = () => {
       }, 3000);
     }
   };
+
+  const logQRResult = async (qrData) => {
+  try {
+    console.log("Sending QR to backend:", qrData);
+    await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/log-qr`, {
+      qrData
+    });
+    console.log("QR logged successfully");
+  } catch (err) {
+    console.error("Failed to log QR:", err);
+  }
+};
 
   const stopScanner = () => {
     if (scannerRef.current) {

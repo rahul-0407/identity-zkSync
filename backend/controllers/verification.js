@@ -58,3 +58,15 @@ export const addVerification = async (req, res) => {
   }
 };
 
+
+export const logScannedQr = async (req, res) => {
+  try {
+    const { qrData } = req.body;
+    console.log('QR scanned:', qrData); // logs in backend terminal
+    res.json({ success: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server Error' });
+  }
+};
+
