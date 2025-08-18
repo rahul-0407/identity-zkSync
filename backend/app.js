@@ -9,8 +9,18 @@ import {errorMiddleware} from "./middlewares/error.js"
 
 const app = express();
 
+const allowedOrigins = ['http://localhost:5173','https://identity-zk-sync.vercel.app/']
+
 app.use(cors({
-    origin: "http://localhost:5173",
+    origin: function (origin,callback){
+        if(!origin) return callback(null, true);
+
+        if(allowedOrigins.includes(origin)){
+            callback(null, true)
+        } else {
+            callback(new Error ("Not allowed by CORS"));
+        }
+    },
     credentials: true,  // Enables Access-Control-Allow-Credentials for cookie support
 }));
 
