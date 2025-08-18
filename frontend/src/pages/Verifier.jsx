@@ -54,7 +54,7 @@ const VerifierPage = () => {
         videoRef.current,
         async (result) => {
           console.log("QR Scanned:", result?.data || result);
-          
+
           // Stop scanning immediately after successful scan
           if (scannerRef.current) {
             scannerRef.current.stop();
@@ -63,7 +63,10 @@ const VerifierPage = () => {
 
           setIsProcessing(true);
           const qrData = result?.data?.trim() || result.trim();
-          logQRResult(qrData)
+          await logQRResult(qrData); // send to backend
+          scannerRef.current.stop();
+          setIsScanning(false);
+          setIsModalOpen(false);
           // await handleScanOrUpload(qrData);
         },
         {
@@ -75,19 +78,18 @@ const VerifierPage = () => {
           highlightCodeOutline: true,
           maxScansPerSecond: 5,
           // Better camera selection for mobile
-          preferredCamera: 'environment' // Use back camera on mobile
+          preferredCamera: "environment", // Use back camera on mobile
         }
       );
 
       // Start the scanner
       await scannerRef.current.start();
       console.log("QR Scanner started successfully");
-
     } catch (err) {
       console.error("Error starting scanner:", err);
       setIsScanning(false);
       setScannerError(`Camera error: ${err.message || err}`);
-      
+
       // Don't close modal immediately, let user see the error
       setTimeout(() => {
         if (!isProcessing && !isSuccess) {
@@ -98,16 +100,14 @@ const VerifierPage = () => {
   };
 
   const logQRResult = async (qrData) => {
-  try {
-    console.log("Sending QR to backend:", qrData);
-    await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/log-qr`, {
-      qrData
-    });
-    console.log("QR logged successfully");
-  } catch (err) {
-    console.error("Failed to log QR:", err);
-  }
-};
+    try {
+      console.log("Sending QR to backend:", qrData);
+      await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/auth/v1/log-qr`, {qrData,});
+      console.log("QR logged successfully");
+    } catch (err) {
+      console.error("Failed to log QR:", err);
+    }
+  };
 
   const stopScanner = () => {
     if (scannerRef.current) {
@@ -134,19 +134,18 @@ const VerifierPage = () => {
 
       console.log("Processing uploaded file:", file.name);
       const qrContent = await QrScanner.scanImage(file);
-      
+
       if (!qrContent) {
         throw new Error("No QR code detected in the uploaded image");
       }
 
       console.log("QR content from image:", qrContent);
       await handleScanOrUpload(qrContent.trim());
-
     } catch (error) {
       console.error("File upload error:", error);
       setIsProcessing(false);
       setScannerError(`Error reading QR from image: ${error.message}`);
-      
+
       // Show error for a few seconds then close
       setTimeout(() => {
         setIsModalOpen(false);
@@ -155,7 +154,7 @@ const VerifierPage = () => {
     }
 
     // Reset file input
-    event.target.value = '';
+    event.target.value = "";
   };
 
   const handleScanOrUpload = async (docId) => {
@@ -163,9 +162,7 @@ const VerifierPage = () => {
       console.log("Starting verification for doc ID:", docId);
 
       // 1️⃣ Get document metadata from backend
-      const metaRes = await axios.get(
-        `${import.meta.env.VITE_BACKEND_URL}/api/auth/v1/metadataByHash/${docId}`
-      );
+      const metaRes = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/auth/v1/metadataByHash/${docId}`);
 
       if (!metaRes.data.success) {
         throw new Error(metaRes.data.msg || "Document not found in database");
@@ -204,19 +201,22 @@ const VerifierPage = () => {
 
       // 4️⃣ Update UI based on verification result
       setIsProcessing(false);
-      
+
       if (ownershipValid && docValid) {
         setIsSuccess(true);
         // Play success sound
         if (successAudioRef.current) {
-          successAudioRef.current.play().catch(e => console.log("Audio play failed:", e));
+          successAudioRef.current
+            .play()
+            .catch((e) => console.log("Audio play failed:", e));
         }
         console.log("Document verified successfully!");
       } else {
         setIsSuccess(false);
-        setScannerError("Document verification failed - not found on blockchain!");
+        setScannerError(
+          "Document verification failed - not found on blockchain!"
+        );
       }
-
     } catch (err) {
       console.error("Verification error:", err);
       setIsProcessing(false);
@@ -297,7 +297,7 @@ const VerifierPage = () => {
               <CheckCircle className="w-6 h-6 mr-3 text-green-400" />
               Verification Results
             </h2>
-            
+
             {docMeta && isSuccess ? (
               <div className="space-y-4">
                 <div className="flex items-center text-green-400 mb-4">
@@ -305,9 +305,18 @@ const VerifierPage = () => {
                   <span className="font-semibold">Document Verified!</span>
                 </div>
                 <div className="space-y-2 text-sm">
-                  <p><span className="text-gray-400">Owner:</span> {docMeta.ownerAddress?.slice(0, 10)}...</p>
-                  <p><span className="text-gray-400">Hash:</span> {docMeta.hash?.slice(0, 10)}...</p>
-                  <p><span className="text-gray-400">Type:</span> {docMeta.documentType || 'Unknown'}</p>
+                  <p>
+                    <span className="text-gray-400">Owner:</span>{" "}
+                    {docMeta.ownerAddress?.slice(0, 10)}...
+                  </p>
+                  <p>
+                    <span className="text-gray-400">Hash:</span>{" "}
+                    {docMeta.hash?.slice(0, 10)}...
+                  </p>
+                  <p>
+                    <span className="text-gray-400">Type:</span>{" "}
+                    {docMeta.documentType || "Unknown"}
+                  </p>
                 </div>
               </div>
             ) : (
@@ -399,30 +408,25 @@ const VerifierPage = () => {
             )}
 
             {/* Processing state */}
-            {isProcessing && (
-              <div className="flex flex-col items-center py-8">
-                <svg
-                  className="animate-spin h-16 w-16 text-blue-500 mb-4"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
+            {isScanning && !scannerError && (
+              <div>
+                <h3 className="text-lg font-semibold mb-4">Scan QR Code</h3>
+                <video
+                  ref={videoRef}
+                  className="w-full max-w-sm mx-auto rounded-lg mb-4"
+                  autoPlay
+                  muted
+                  playsInline
+                />
+                <p className="text-sm text-gray-400">
+                  Point your camera at a QR code
+                </p>
+                <button
+                  onClick={closeModal}
+                  className="mt-4 bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded-lg"
                 >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  ></circle>
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-                  ></path>
-                </svg>
-                <p className="text-lg text-gray-300 font-semibold">Verifying Document...</p>
-                <p className="text-sm text-gray-500 mt-2">Checking blockchain records</p>
+                  Cancel
+                </button>
               </div>
             )}
 
@@ -438,8 +442,14 @@ const VerifierPage = () => {
                 </p>
                 {docMeta && (
                   <div className="bg-gray-800 rounded-lg p-4 mb-6 text-left">
-                    <p className="text-sm"><span className="text-gray-400">Owner:</span> {docMeta.ownerAddress?.slice(0, 20)}...</p>
-                    <p className="text-sm"><span className="text-gray-400">Hash:</span> {docMeta.hash?.slice(0, 20)}...</p>
+                    <p className="text-sm">
+                      <span className="text-gray-400">Owner:</span>{" "}
+                      {docMeta.ownerAddress?.slice(0, 20)}...
+                    </p>
+                    <p className="text-sm">
+                      <span className="text-gray-400">Hash:</span>{" "}
+                      {docMeta.hash?.slice(0, 20)}...
+                    </p>
                   </div>
                 )}
                 <button
