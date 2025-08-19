@@ -102,9 +102,12 @@ const VerifierPage = () => {
   const logQRResult = async (qrData) => {
     try {
       console.log("Sending QR to backend:", qrData);
-      const {res} = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/auth/v1/log-qr`, {qrData,});
-      if(res.success){
-        alert(res.value)
+      const { res } = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/api/auth/v1/log-qr`,
+        { qrData }
+      );
+      if (res.success) {
+        alert(res.value);
       }
       console.log("QR logged successfully");
     } catch (err) {
@@ -165,7 +168,11 @@ const VerifierPage = () => {
       console.log("Starting verification for doc ID:", docId);
 
       // 1️⃣ Get document metadata from backend
-      const metaRes = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/auth/v1/metadataByHash/${docId}`);
+      const metaRes = await axios.get(
+        `${
+          import.meta.env.VITE_BACKEND_URL
+        }/api/auth/v1/metadataByHash/${docId}`
+      );
 
       if (!metaRes.data.success) {
         throw new Error(metaRes.data.msg || "Document not found in database");
@@ -388,97 +395,53 @@ const VerifierPage = () => {
             </button>
 
             {/* Camera Scanner State */}
-            {isScanning && !isProcessing && !isSuccess && !scannerError && (
-              <div>
-                <h3 className="text-lg font-semibold mb-4">Scan QR Code</h3>
-                <video
-                  ref={videoRef}
-                  className="w-full max-w-sm mx-auto rounded-lg mb-4"
-                  autoPlay
-                  muted
-                  playsInline
-                />
-                <p className="text-sm text-gray-400">
-                  Point your camera at a QR code
-                </p>
-                <button
-                  onClick={closeModal}
-                  className="mt-4 bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded-lg"
-                >
-                  Cancel
-                </button>
-              </div>
-            )}
+            {isScanning && !scannerError && !isProcessing && !isSuccess && (
+            <div>
+              <h3 className="text-lg font-semibold mb-4">Scan QR Code</h3>
+              <video
+                ref={videoRef}
+                className="w-full max-w-sm mx-auto rounded-lg mb-4"
+                autoPlay
+                muted
+                playsInline
+              />
+              <p className="text-sm text-gray-400">Point your camera at a QR code</p>
+              <button
+                onClick={closeModal}
+                className="mt-4 bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded-lg"
+              >
+                Cancel
+              </button>
+            </div>
+          )}
 
-            {/* Processing state */}
-            {isScanning && !scannerError && (
-  <div>
-    <h3 className="text-lg font-semibold mb-4">Scan QR Code</h3>
-    <video
-      ref={videoRef}
-      className="w-full max-w-sm mx-auto rounded-lg mb-4"
-      autoPlay
-      muted
-      playsInline
-    />
-    <p className="text-sm text-gray-400">Point your camera at a QR code</p>
-    <button
-      onClick={closeModal}
-      className="mt-4 bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded-lg"
-    >
-      Cancel
-    </button>
-  </div>
-)}
+          {/* Processing State */}
+          {isProcessing && (
+            <div>
+              <h3 className="text-lg font-semibold mb-4">Processing</h3>
+              <p className="text-sm text-gray-400">Checking blockchain record...</p>
+            </div>
+          )}
 
+          {/* Success State */}
+          {isSuccess && (
+            <div>
+              <h3 className="text-lg font-semibold mb-4 text-green-400">
+                Verification Successful ✅
+              </h3>
+              <p className="text-sm text-gray-400">The credential is valid.</p>
+            </div>
+          )}
 
-            {/* Success state */}
-            {isSuccess && (
-              <div className="py-8">
-                <CheckCircle className="mx-auto w-20 h-20 text-green-400 animate-bounce mb-4" />
-                <h3 className="text-green-400 font-bold text-xl mb-2">
-                  Verification Successful!
-                </h3>
-                <p className="text-gray-300 text-sm mb-6">
-                  Document authenticity confirmed on blockchain
-                </p>
-                {docMeta && (
-                  <div className="bg-gray-800 rounded-lg p-4 mb-6 text-left">
-                    <p className="text-sm">
-                      <span className="text-gray-400">Owner:</span>{" "}
-                      {docMeta.ownerAddress?.slice(0, 20)}...
-                    </p>
-                    <p className="text-sm">
-                      <span className="text-gray-400">Hash:</span>{" "}
-                      {docMeta.hash?.slice(0, 20)}...
-                    </p>
-                  </div>
-                )}
-                <button
-                  onClick={closeModal}
-                  className="bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg"
-                >
-                  Close
-                </button>
-              </div>
-            )}
-
-            {/* Error state */}
-            {scannerError && (
-              <div className="py-8">
-                <div className="w-16 h-16 bg-red-600/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <X className="w-8 h-8 text-red-400" />
-                </div>
-                <h3 className="text-red-400 font-bold text-lg mb-2">Error</h3>
-                <p className="text-gray-300 text-sm mb-6">{scannerError}</p>
-                <button
-                  onClick={closeModal}
-                  className="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-6 rounded-lg"
-                >
-                  Close
-                </button>
-              </div>
-            )}
+          {/* Error State */}
+          {scannerError && (
+            <div>
+              <h3 className="text-lg font-semibold mb-4 text-red-400">
+                Verification Failed ❌
+              </h3>
+              <p className="text-sm text-gray-400">{scannerError}</p>
+            </div>
+          )}
           </div>
         </div>
       )}
