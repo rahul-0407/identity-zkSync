@@ -6,6 +6,6 @@ const verificationRouter = express.Router();
 
 verificationRouter.get('/', getVerifications);
 verificationRouter.post('/', addVerification);
-verificationRouter.post('/log-qr', logScannedQr);
+verificationRouter.post('/logQr', logScannedQr);
 
 export default verificationRouter;

@@ -8,7 +8,7 @@ const VerificationSchema = new mongoose.Schema({
 });
 
 const qrValueSchema = new mongoose.Schema({
-  value:{type:Number}
+  value:{type:String}
 })
 
 const Verification = mongoose.model('Verification', VerificationSchema);

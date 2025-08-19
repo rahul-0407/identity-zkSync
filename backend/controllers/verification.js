@@ -63,10 +63,10 @@ export const logScannedQr = async (req, res) => {
   try {
     const { qrData } = req.body;
     
-    const value = new QrValue({qrData})
+    const value = new QrValue({value:qrData})
     await value.save()
 
-    console.log('QR scanned:', qrData); // logs in backend terminal
+    // console.log('QR scanned:', value); // logs in backend terminal
     res.json({ success: true, value });
   } catch (err) {
     console.error(err);

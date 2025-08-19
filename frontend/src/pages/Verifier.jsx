@@ -66,7 +66,8 @@ const VerifierPage = () => {
           await logQRResult(qrData); // send to backend
           scannerRef.current.stop();
           setIsScanning(false);
-          setIsModalOpen(false);
+          setIsProcessing(false)
+          setIsSuccess(true)
           // await handleScanOrUpload(qrData);
         },
         {
@@ -101,13 +102,12 @@ const VerifierPage = () => {
 
   const logQRResult = async (qrData) => {
     try {
-      console.log("Sending QR to backend:", qrData);
-      const { res } = await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/api/auth/v1/log-qr`,
-        { qrData }
-      );
-      if (res.success) {
-        alert(res.value);
+      // console.log("Sending QR to backend:", qrData);
+      const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/verifications/logQr`,{ qrData } );
+      // console.log(res.data.value.value)
+
+      if (res.data.success) {
+        alert(res.data.value.value);
       }
       console.log("QR logged successfully");
     } catch (err) {
