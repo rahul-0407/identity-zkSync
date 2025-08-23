@@ -67,11 +67,10 @@ const deleteDocument = async (req, res, next) => {
       return next(new ErrorHandler("Document hash is required", 400));
     }
 
-    // Find and delete document
-    const deletedDoc = await Document.findOneAndDelete({ hash });
+    const result = await Document.findOneAndDelete({ hash });
 
-    if (!deletedDoc) {
-      return next(new ErrorHandler("Document not found", 404));
+    if (!result) {
+      return res.status(404).json({ success: false, msg: "Document not found" });
     }
 
     return res.json({

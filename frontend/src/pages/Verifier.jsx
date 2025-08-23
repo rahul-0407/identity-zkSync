@@ -12,6 +12,7 @@ const VerifierPage = () => {
   const [isSuccess, setIsSuccess] = useState(false);
   const [docMeta, setDocMeta] = useState();
   const [scannerError, setScannerError] = useState(null);
+  const [verificationStatus, setVerificationStatus] = useState("idle");
   const [isScanning, setIsScanning] = useState(false);
 
   const successAudioRef = useRef(null);
@@ -53,8 +54,6 @@ const VerifierPage = () => {
       scannerRef.current = new QrScanner(
         videoRef.current,
         async (result) => {
-          console.log("QR Scanned:", result?.data || result);
-
           // Stop scanning immediately after successful scan
           if (scannerRef.current) {
             scannerRef.current.stop();
@@ -86,7 +85,6 @@ const VerifierPage = () => {
 
       // Start the scanner
       await scannerRef.current.start();
-      console.log("QR Scanner started successfully");
     } catch (err) {
       console.error("Error starting scanner:", err);
       setIsScanning(false);
@@ -103,17 +101,14 @@ const VerifierPage = () => {
 
   const logQRResult = async (qrData) => {
     try {
-      // console.log("Sending QR to backend:", qrData);
       const res = await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/api/verifications/logQr`,
         { qrData }
       );
-      // console.log(res.data.value.value)
 
       if (res.data.success) {
         alert(res.data.value.value);
       }
-      console.log("QR logged successfully");
     } catch (err) {
       console.error("Failed to log QR:", err);
     }
@@ -142,14 +137,12 @@ const VerifierPage = () => {
         return;
       }
 
-      console.log("Processing uploaded file:", file.name);
       const qrContent = await QrScanner.scanImage(file);
 
       if (!qrContent) {
         throw new Error("No QR code detected in the uploaded image");
       }
 
-      console.log("QR content from image:", qrContent);
       await handleScanOrUpload(qrContent.trim());
       // setIsProcessing(false)
       // setIsSuccess(true)
@@ -171,8 +164,6 @@ const VerifierPage = () => {
 
   const handleScanOrUpload = async (hash) => {
     try {
-      console.log("Starting verification for hash:", hash);
-
       // 1️⃣ Get document metadata from backend
       const metaRes = await axios.get(
         `${import.meta.env.VITE_BACKEND_URL}/api/auth/v1/metadataByHash/${hash}`
@@ -184,7 +175,6 @@ const VerifierPage = () => {
 
       const metadata = metaRes.data.metadata;
       setDocMeta(metadata);
-      console.log("metadata:", metadata);
 
       const normalizedHash = metadata.hash.startsWith("0x")
         ? metadata.hash
@@ -195,55 +185,50 @@ const VerifierPage = () => {
       }
 
       const bytes32Hash = ethers.getBytes(normalizedHash);
-      console.log("bytes " + bytes32Hash);
 
       // 2️⃣ Get contract instance
-      // const result = await getContract(false);
-      // if (!result) {
-      //   throw new Error("Wallet not connected");
-      // }
-      // const { contract } = result;
+      const result = await getContract(false);
+      if (!result) {
+        throw new Error("Wallet not connected");
+      }
+      const { contract } = result;
 
       // // 3️⃣ Verify on blockchain
-      // const ownershipValid = await contract.verifyHash(
-      //   bytes32Hash,
-      //   metadata.ownerAddress
-      // );
+      const ownershipValid = await contract.verifyHash(
+        bytes32Hash,
+        metadata.ownerAddress
+      );
 
-      // const docValid = await contract.verifyDocument(
-      //   metadata.ownerAddress,
-      //   bytes32Hash
-      // );
+      const docValid = await contract.verifyDocument(
+        metadata.ownerAddress,
+        bytes32Hash
+      );
 
-      // 4️⃣ Update UI based on verification result
-      console.log(metadata.hash)
-      if (metadata.hash === hash) {
+      if (ownershipValid && docValid) {
         setIsProcessing(false);
         setIsSuccess(true);
+        setVerificationStatus("success");
+        // Play success sound
+        if (successAudioRef.current) {
+          successAudioRef.current
+            .play()
+            .catch((e) => console.log("Audio play failed:", e));
+        }
+      } else {
+        setVerificationStatus("failed");
+        setIsProcessing(false);
+        setIsSuccess(false);
+        setScannerError(
+          "Document verification failed - not found on blockchain!"
+        );
       }
-
-      // if (ownershipValid && docValid) {
-      //   setIsSuccess(true);
-      //   // Play success sound
-      //   if (successAudioRef.current) {
-      //     successAudioRef.current
-      //       .play()
-      //       .catch((e) => console.log("Audio play failed:", e));
-      //   }
-      //   console.log("Document verified successfully!");
-      // } else {
-      //   setIsSuccess(false);
-      //   setScannerError(
-      //     "Document verification failed - not found on blockchain!"
-      //   );
-      // }
-      console.log("sucess")
     } catch (err) {
       console.error("Verification error:", err);
       setIsProcessing(false);
       setScannerError(`Verification failed: ${err.message}`);
     }
   };
+
 
   const closeModal = () => {
     stopScanner();
@@ -319,12 +304,35 @@ const VerifierPage = () => {
               Verification Results
             </h2>
 
-            {docMeta && isSuccess ? (
+            {docMeta ? (
               <div className="space-y-4">
-                <div className="flex items-center text-green-400 mb-4">
-                  <CheckCircle className="w-6 h-6 mr-2" />
-                  <span className="font-semibold">Document Verified!</span>
-                </div>
+                {verificationStatus === "success" && (
+                  // ✅ Success message
+                  <div className="flex items-center text-green-400 mb-4">
+                    <CheckCircle className="w-6 h-6 mr-2" />
+                    <span className="font-semibold">
+                      ✅ Document Verified Successfully!
+                    </span>
+                  </div>
+                )}{" "}
+                :{" "}
+                {verificationStatus === "failed" && (
+                  // ❌ Failure message with reason
+                  <div className="flex flex-col mb-4">
+                    <div className="flex items-center text-red-400">
+                      <X className="w-6 h-6 mr-2" />
+                      <span className="font-semibold">
+                        ❌ Verification Failed
+                      </span>
+                    </div>
+                    {scannerError && (
+                      <p className="text-sm text-red-400 mt-2">
+                        Reason: {scannerError}
+                      </p>
+                    )}
+                  </div>
+                )}
+                {/* Show metadata if available */}
                 <div className="space-y-2 text-sm">
                   <p>
                     <span className="text-gray-400">Owner:</span>{" "}
@@ -341,11 +349,12 @@ const VerifierPage = () => {
                 </div>
               </div>
             ) : (
+              // No scan results yet
               <div className="flex flex-col items-center justify-center h-full text-center text-gray-500">
                 <QrCode className="w-24 h-24 mb-4" />
-                <p className="font-medium">No scan results yet</p>
-                <p className="text-sm">
-                  Scan a QR code to see verification results here
+                <p className="font-medium">No verification attempt yet</p>
+                <p className="text-sm text-gray-400">
+                  Scan a QR code or upload a document hash to verify.
                 </p>
               </div>
             )}

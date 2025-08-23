@@ -13,7 +13,7 @@ const TestContextProvider = ({ children }) => {
   const [isConnecting, setIsConnecting] = useState(false);
   const [document, setDocuments] = useState([]);
   const [chainDocuments, setChainDocuments] = useState([]);
-    const [loadingChainData, setLoadingChainData] = useState(false);
+  const [loadingChainData, setLoadingChainData] = useState(false);
 
   // NEW: User authentication state
   const [user, setUser] = useState(() => {
@@ -84,7 +84,6 @@ const TestContextProvider = ({ children }) => {
         // Store user data
         localStorage.setItem("userData", JSON.stringify(user));
 
-        // console.log("User authenticated:", user);
         return user;
       }
     } catch (error) {
@@ -133,36 +132,61 @@ const TestContextProvider = ({ children }) => {
 
       if (response.data.success) {
         setDocuments(response.data.documents);
-        console.log(response.data.documents);
       }
     } catch (error) {
       console.error("Failed to load documents:", error);
     }
   };
 
-  const getDataFromChain = async () => {
-      try {
-        setLoadingChainData(true);
-        const { contract } = await getContract(false); // false = read-only call
-  
-        // Fetch docs for connected wallet (msg.sender inside contract)
-        const docs = await contract.getDocuments();
-  
-        const parsedDocs = docs.map((doc, i) => ({
-          id: i + 1,
-          docType: doc.docType,
-          timestamp: new Date(Number(doc.timestamp) * 1000).toLocaleString(),
-          docHash: doc.docHash,
-        }));
-  
-        setChainDocuments(parsedDocs);
-        console.log("Documents from contract:", parsedDocs);
-      } catch (error) {
-        console.error("Failed to load documents from contract:", error);
-      } finally {
-        setLoadingChainData(false);
+  const removeDocument = async (index,hash) => {
+    try {
+      const cIndex = (document.length - 1 - index)
+      const { contract } = await getContract();
+      const tx = await contract.removeDocument(cIndex);
+      await tx.wait();
+
+      const res = await axios.delete(
+        `${
+          import.meta.env.VITE_BACKEND_URL
+        }/api/auth/v1/deleteDocument/${hash}`,
+        { withCredentials: true } // if you are using cookies/auth
+      );
+
+      if (!res.data.success) {
+        throw new Error(res.data.msg || "Failed to delete document");
       }
-    };
+
+      // 2️⃣ Update frontend state to remove document instantly
+      setDocuments((prevDocs) => prevDocs.filter((doc) => doc.hash !== hash));
+
+      console.log(`✅ Document with hash ${hash} removed successfully`);
+    } catch (error) {
+      console.error("Failed to load documents:", error);
+    }
+  };
+
+  const getDataFromChain = async () => {
+    try {
+      setLoadingChainData(true);
+      const { contract } = await getContract(false); // false = read-only call
+
+      // Fetch docs for connected wallet (msg.sender inside contract)
+      const docs = await contract.getDocuments();
+
+      const parsedDocs = docs.map((doc, i) => ({
+        id: i + 1,
+        docType: doc.docType,
+        timestamp: new Date(Number(doc.timestamp) * 1000).toLocaleString(),
+        docHash: doc.docHash,
+      }));
+
+      setChainDocuments(parsedDocs);
+    } catch (error) {
+      console.error("Failed to load documents from contract:", error);
+    } finally {
+      setLoadingChainData(false);
+    }
+  };
 
   // const loadUserDocuments =() => {
   //   console.group("hello")
@@ -218,7 +242,12 @@ const TestContextProvider = ({ children }) => {
     authToken, // JWT token or session identifier
     disconnect, // function to disconnect
     loadUserDocuments, // function to reload documents
-    authenticateUser,setChainDocuments, getDataFromChain, loadingChainData, chainDocuments // function to authenticate user
+    authenticateUser,
+    setChainDocuments,
+    getDataFromChain,
+    loadingChainData,
+    chainDocuments,
+    removeDocument, // function to authenticate user
   };
 
   return <TestContext.Provider value={value}>{children}</TestContext.Provider>;

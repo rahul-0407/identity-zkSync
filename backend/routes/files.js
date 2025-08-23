@@ -6,7 +6,7 @@ import { authenticateUser } from '../middlewares/auth.js';
 const fileRouter = express.Router();
 
 fileRouter.post("/uploadFile",authenticateUser,upload.fields([{name:'image0',maxCount:1}]),uploadAndRegister)
-fileRouter.get("/deleteDocument/:hash",deleteDocument)
+fileRouter.delete("/deleteDocument/:hash",deleteDocument)
 fileRouter.get("/metadataByHash/:hash",getDocumentMetadata)
 fileRouter.get("/documents/:ownerAddress",authenticateUser, getDocumentsByOwner);
 

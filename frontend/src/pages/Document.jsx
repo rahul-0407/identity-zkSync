@@ -16,6 +16,10 @@ import {
   Zap,
   RefreshCw,
   Copy,
+  Trash2Icon,
+  TrashIcon,
+  LucideTrash,
+  LucideTrash2,
 } from "lucide-react";
 
 const Document = () => {
@@ -26,6 +30,7 @@ const Document = () => {
     getDataFromChain,
     loadingChianData,
     chainDocuments,
+    removeDocument,
   } = useContext(TestContext);
   const wallet = localStorage.getItem("address");
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -39,6 +44,48 @@ const Document = () => {
     return <Navigate to="/login" replace />;
   }
 
+  // Array of all main Tailwind colors (without shades)
+  const tailwindColors = [
+    "red",
+    "orange",
+    "amber",
+    "yellow",
+    "lime",
+    "green",
+    "emerald",
+    "teal",
+    "cyan",
+    "sky",
+    "blue",
+    "indigo",
+    "violet",
+    "purple",
+    "fuchsia",
+    "pink",
+    "rose",
+  ];
+
+  // Function to generate a random gradient
+  function generateRandomGradient() {
+    const fromColor =
+      tailwindColors[Math.floor(Math.random() * tailwindColors.length)];
+    let toColor =
+      tailwindColors[Math.floor(Math.random() * tailwindColors.length)];
+
+    // Make sure fromColor and toColor are different
+    while (toColor === fromColor) {
+      toColor =
+        tailwindColors[Math.floor(Math.random() * tailwindColors.length)];
+    }
+
+    // Return gradient string in Tailwind format
+    return `from-${fromColor}-500 to-${toColor}-600`;
+  }
+
+  // Example usage
+  console.log(generateRandomGradient());
+  // Might output: "from-red-500 to-yellow-600"
+
   return (
     <div className="bg-neutral-950 min-h-screen">
       {/* Hero Section */}
@@ -46,14 +93,14 @@ const Document = () => {
         <div className="container mx-auto text-center">
           <div className="max-w-4xl mx-auto">
             <div className="bg-slate-800 no-underline group  relative shadow-2xl shadow-zinc-900 rounded-full p-px text-xs font-semibold leading-6  text-white inline-block">
-            <span className="absolute inset-0 overflow-hidden rounded-full">
-              <span className="absolute inset-0 rounded-full bg-[image:radial-gradient(75%_100%_at_50%_0%,rgba(56,189,248,0.6)_0%,rgba(56,189,248,0)_75%)] opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
-            </span>
-            <div className="relative flex space-x-2 items-center z-10 rounded-full bg-zinc-950 py-0.5 px-4 ring-1 ring-white/10 ">
-              <span>On-Chain Documents</span>
+              <span className="absolute inset-0 overflow-hidden rounded-full">
+                <span className="absolute inset-0 rounded-full bg-[image:radial-gradient(75%_100%_at_50%_0%,rgba(56,189,248,0.6)_0%,rgba(56,189,248,0)_75%)] opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+              </span>
+              <div className="relative flex space-x-2 items-center z-10 rounded-full bg-zinc-950 py-0.5 px-4 ring-1 ring-white/10 ">
+                <span>On-Chain Documents</span>
+              </div>
+              <span className="absolute -bottom-0 left-[1.125rem] h-px w-[calc(100%-2.25rem)] bg-gradient-to-r from-emerald-400/0 via-emerald-400/90 to-emerald-400/0 transition-opacity duration-500 group-hover:opacity-40" />
             </div>
-            <span className="absolute -bottom-0 left-[1.125rem] h-px w-[calc(100%-2.25rem)] bg-gradient-to-r from-emerald-400/0 via-emerald-400/90 to-emerald-400/0 transition-opacity duration-500 group-hover:opacity-40" />
-          </div>
             <h1 className=" bg-gradient-to-tl from-indigo-400 via-pink-100 to-gray-100 text-transparent bg-clip-text text-5xl md:text-6xl font-bold mb-6 ">
               Secure Your Digital Documents,
               <br />
@@ -161,7 +208,7 @@ const Document = () => {
                   {/* Document Header */}
                   <div className="flex items-start justify-between mb-6">
                     <div
-                      className={`w-14 h-14 bg-gradient-to-br ${doc.color} rounded-2xl flex items-center justify-center shadow-lg`}
+                      className={`w-14 h-14 bg-gradient-to-br ${generateRandomGradient()} rounded-2xl flex items-center justify-center shadow-lg`}
                     >
                       <FileText className="w-7 h-7 text-white" />
                     </div>
@@ -177,6 +224,10 @@ const Document = () => {
                           Pending
                         </div>
                       )}
+                      <Trash2Icon
+                        onClick={() => removeDocument(index, doc.hash)}
+                        className="text-red-700/80"
+                      />
                     </div>
                   </div>
 
@@ -270,7 +321,6 @@ const Document = () => {
             These documents are fetched directly from the smart contract.
           </p>
         </header>
-
 
         {/* Action Button */}
         <div className="flex justify-center mb-8">
