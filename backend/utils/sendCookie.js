@@ -10,8 +10,8 @@ export const sendCookies = async (data, res, statusCode, user) => {
       .status(statusCode)
       .cookie("token", token, {
         httpOnly: false, // Try with false first to test
-            sameSite: "Lax", // Always use Lax for localhost
-            secure: false, // Always false for localhost HTTP
+            sameSite: "None", // Always use Lax for localhost
+            secure: true, // Always false for localhost HTTP
             path: "/",
             maxAge: 7 * 24 * 60 * 60 * 1000,
             domain: undefined,
