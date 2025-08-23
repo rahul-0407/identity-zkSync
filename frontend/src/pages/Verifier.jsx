@@ -236,6 +236,7 @@ const VerifierPage = () => {
       //     "Document verification failed - not found on blockchain!"
       //   );
       // }
+      console.log("sucess")
     } catch (err) {
       console.error("Verification error:", err);
       setIsProcessing(false);
