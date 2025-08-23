@@ -21,8 +21,10 @@ function generateRandomGradient() {
 
 const fileSchema = new mongoose.Schema({
     hash:{type:String,require:true},
-    ipfsCid:{type:String, require:true},
+    url:{type:String, require:true},
     ownerAddress:{type:String, require:true},
+
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
 
     documentType: { type: String, required: true },
     name: { type: String, required: true },

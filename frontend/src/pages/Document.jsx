@@ -1,43 +1,42 @@
 import React, { useContext, useEffect, useState } from "react";
 import { TestContext } from "../context/TestContext";
 import { QRCodeSVG } from "qrcode.react";
-import { Card, CardContent } from "../components/ui/Card";
-import DocumentDropdown from "../components/ui/DocumentDropdown";
-import { Button, buttonVariants } from "../components/ui/Button";
 import { AddDocumentModal } from "../components/AddDocumet";
 import { Navigate } from "react-router-dom";
 import {
   Plus,
-  MoreVertical,
   QrCode,
-  Trash2,
   FileText,
   Shield,
   Users,
   CheckCircle,
   Calendar,
   Eye,
-  Download,
   Clock,
   Zap,
+  RefreshCw,
+  Copy,
 } from "lucide-react";
 
 const Document = () => {
-  const { document } = useContext(TestContext);
+  const {
+    document,
+    isAuthenticated,
+    walletAddress,
+    getDataFromChain,
+    loadingChianData,
+    chainDocuments,
+  } = useContext(TestContext);
   const wallet = localStorage.getItem("address");
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [selectedDocQR, setSelectedDocQR] = useState(null);
 
-  useEffect(() => {
-    console.log(document[0]);
-  }, [document]);
+  // useEffect(() => {
+  //   console.log(document[0]);
+  // }, [document]);
 
-  if (!wallet) {
+  if (!walletAddress || !isAuthenticated) {
     return <Navigate to="/login" replace />;
-  }
-
-  if (!document.length) {
-    return <p>No documents uploaded yet.</p>;
   }
 
   return (
@@ -46,9 +45,15 @@ const Document = () => {
       <section className="pb-20 pt-25  px-4">
         <div className="container mx-auto text-center">
           <div className="max-w-4xl mx-auto">
-            <div className="inline-block px-4 py-2 bg-gray-800 rounded-full text-sm text-gray-300 mb-6">
-              Document Management
+            <div className="bg-slate-800 no-underline group  relative shadow-2xl shadow-zinc-900 rounded-full p-px text-xs font-semibold leading-6  text-white inline-block">
+            <span className="absolute inset-0 overflow-hidden rounded-full">
+              <span className="absolute inset-0 rounded-full bg-[image:radial-gradient(75%_100%_at_50%_0%,rgba(56,189,248,0.6)_0%,rgba(56,189,248,0)_75%)] opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+            </span>
+            <div className="relative flex space-x-2 items-center z-10 rounded-full bg-zinc-950 py-0.5 px-4 ring-1 ring-white/10 ">
+              <span>On-Chain Documents</span>
             </div>
+            <span className="absolute -bottom-0 left-[1.125rem] h-px w-[calc(100%-2.25rem)] bg-gradient-to-r from-emerald-400/0 via-emerald-400/90 to-emerald-400/0 transition-opacity duration-500 group-hover:opacity-40" />
+          </div>
             <h1 className=" bg-gradient-to-tl from-indigo-400 via-pink-100 to-gray-100 text-transparent bg-clip-text text-5xl md:text-6xl font-bold mb-6 ">
               Secure Your Digital Documents,
               <br />
@@ -212,7 +217,7 @@ const Document = () => {
                       <Eye className="w-4 h-4 mr-2 inline" /> View
                     </button>
                     <button
-                      onClick={() => setSelectedDocQR(doc.id)}
+                      onClick={() => setSelectedDocQR(doc.hash)}
                       className="flex-1 bg-purple-600/20 text-purple-400 px-4 py-2 rounded-xl"
                     >
                       <QrCode className="w-4 h-4 mr-2 inline" /> QR Code
@@ -245,6 +250,102 @@ const Document = () => {
           )}
         </div>
       </section>
+
+      <section className="max-w-6xl mx-auto">
+        {/* Header */}
+        <header className="text-center py-12">
+          <div className="bg-slate-800 no-underline group  relative shadow-2xl shadow-zinc-900 rounded-full p-px text-xs font-semibold leading-6  text-white inline-block">
+            <span className="absolute inset-0 overflow-hidden rounded-full">
+              <span className="absolute inset-0 rounded-full bg-[image:radial-gradient(75%_100%_at_50%_0%,rgba(56,189,248,0.6)_0%,rgba(56,189,248,0)_75%)] opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+            </span>
+            <div className="relative flex space-x-2 items-center z-10 rounded-full bg-zinc-950 py-0.5 px-4 ring-1 ring-white/10 ">
+              <span>On-Chain Documents</span>
+            </div>
+            <span className="absolute -bottom-0 left-[1.125rem] h-px w-[calc(100%-2.25rem)] bg-gradient-to-r from-emerald-400/0 via-emerald-400/90 to-emerald-400/0 transition-opacity duration-500 group-hover:opacity-40" />
+          </div>
+          <h2 className="bg-gradient-to-tl from-indigo-400 via-pink-100 to-gray-100 text-transparent bg-clip-text text-5xl font-bold  mb-4">
+            Your Document Vault
+          </h2>
+          <p className="text-lg text-gray-400 max-w-2xl mx-auto">
+            These documents are fetched directly from the smart contract.
+          </p>
+        </header>
+
+
+        {/* Action Button */}
+        <div className="flex justify-center mb-8">
+          <button
+            onClick={getDataFromChain}
+            disabled={loadingChianData}
+            className="bg-[rgba(79,82,255,0.92)] hover:bg-[rgba(68,51,255)] text-white font-semibold py-3 px-6 rounded-lg flex items-center gap-2 transition-colors disabled:opacity-50"
+          >
+            <RefreshCw
+              className={`w-5 h-5 ${loadingChianData ? "animate-spin" : ""} `}
+            />
+            {loadingChianData ? "Fetching..." : "Fetch Documents"}
+          </button>
+        </div>
+
+        {/* Documents Table */}
+        {chainDocuments.length > 0 ? (
+          <div className="overflow-x-auto bg-gray-800/50 border border-gray-700 rounded-2xl shadow-lg">
+            <table className="min-w-full text-sm text-left text-gray-300">
+              <thead className="bg-gray-900 text-gray-400 uppercase text-xs">
+                <tr>
+                  <th scope="col" className="px-6 py-3">
+                    #
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    Document Type
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    Timestamp
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    Hash
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {chainDocuments.map((doc) => (
+                  <tr
+                    key={doc.id}
+                    className="border-b border-gray-700 hover:bg-gray-700/30 transition-colors"
+                  >
+                    <td className="px-6 py-4">{doc.id}</td>
+                    <td className="px-6 py-4 flex items-center gap-2">
+                      <FileText className="w-4 h-4 text-blue-400" />
+                      {doc.docType || "Unknown"}
+                    </td>
+                    <td className="px-6 py-4">{doc.timestamp}</td>
+                    <td className="px-6 py-4 truncate max-w-xs flex items-center gap-2">
+                      <span>{doc.docHash}</span>
+                      <button
+                        onClick={() => copyToClipboard(doc.docHash)}
+                        className="text-gray-400 hover:text-white"
+                        title="Copy Hash"
+                      >
+                        <Copy className="w-4 h-4" />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          !loadingChianData && (
+            <p className="text-center text-gray-500">
+              No documents found. Click{" "}
+              <span className="font-semibold text-blue-400">
+                Fetch Documents
+              </span>{" "}
+              to load from the blockchain.
+            </p>
+          )
+        )}
+      </section>
+
       <AddDocumentModal
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}

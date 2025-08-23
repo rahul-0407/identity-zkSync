@@ -51,16 +51,20 @@ const LoginPage = () => {
     isConnecting,
     connect,
     setSelectedWallet,
+    walletAddress,
     setIsConnecting,
+    isAuthenticated,
   } = useContext(TestContext);
   const [error, setError] = useState(null);
   const [isMetaMaskInstalled, setIsMetaMaskInstalled] = useState(false);
 
   const wallet = localStorage.getItem("address");
 
-  if (wallet) {
-    return <Navigate to="/document" replace />;
-  }
+  useEffect(() => {
+    if (walletAddress && isAuthenticated) {
+      navigate("/document");
+    }
+  }, [walletAddress, isAuthenticated, navigate]);
 
   //   useEffect(() => {
   //     const wallet = localStorage.getItem("address")

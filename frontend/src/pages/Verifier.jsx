@@ -66,8 +66,8 @@ const VerifierPage = () => {
           await logQRResult(qrData); // send to backend
           scannerRef.current.stop();
           setIsScanning(false);
-          setIsProcessing(false)
-          setIsSuccess(true)
+          setIsProcessing(false);
+          setIsSuccess(true);
           // await handleScanOrUpload(qrData);
         },
         {
@@ -103,7 +103,10 @@ const VerifierPage = () => {
   const logQRResult = async (qrData) => {
     try {
       // console.log("Sending QR to backend:", qrData);
-      const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/verifications/logQr`,{ qrData } );
+      const res = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/api/verifications/logQr`,
+        { qrData }
+      );
       // console.log(res.data.value.value)
 
       if (res.data.success) {
@@ -146,9 +149,9 @@ const VerifierPage = () => {
       }
 
       console.log("QR content from image:", qrContent);
-      // await handleScanOrUpload(qrContent.trim());
-      setIsProcessing(false)
-      setIsSuccess(true)
+      await handleScanOrUpload(qrContent.trim());
+      // setIsProcessing(false)
+      // setIsSuccess(true)
     } catch (error) {
       console.error("File upload error:", error);
       setIsProcessing(false);
@@ -165,15 +168,13 @@ const VerifierPage = () => {
     event.target.value = "";
   };
 
-  const handleScanOrUpload = async (docId) => {
+  const handleScanOrUpload = async (hash) => {
     try {
-      console.log("Starting verification for doc ID:", docId);
+      console.log("Starting verification for hash:", hash);
 
       // 1️⃣ Get document metadata from backend
       const metaRes = await axios.get(
-        `${
-          import.meta.env.VITE_BACKEND_URL
-        }/api/auth/v1/metadataByHash/${docId}`
+        `${import.meta.env.VITE_BACKEND_URL}/api/auth/v1/metadataByHash/${hash}`
       );
 
       if (!metaRes.data.success) {
@@ -182,6 +183,7 @@ const VerifierPage = () => {
 
       const metadata = metaRes.data.metadata;
       setDocMeta(metadata);
+      console.log("metadata:", metadata);
 
       const normalizedHash = metadata.hash.startsWith("0x")
         ? metadata.hash
@@ -192,43 +194,48 @@ const VerifierPage = () => {
       }
 
       const bytes32Hash = ethers.getBytes(normalizedHash);
+      console.log("bytes " + bytes32Hash);
 
       // 2️⃣ Get contract instance
-      const result = await getContract(false);
-      if (!result) {
-        throw new Error("Wallet not connected");
-      }
-      const { contract } = result;
+      // const result = await getContract(false);
+      // if (!result) {
+      //   throw new Error("Wallet not connected");
+      // }
+      // const { contract } = result;
 
-      // 3️⃣ Verify on blockchain
-      const ownershipValid = await contract.verifyHash(
-        bytes32Hash,
-        metadata.ownerAddress
-      );
+      // // 3️⃣ Verify on blockchain
+      // const ownershipValid = await contract.verifyHash(
+      //   bytes32Hash,
+      //   metadata.ownerAddress
+      // );
 
-      const docValid = await contract.verifyDocument(
-        metadata.ownerAddress,
-        bytes32Hash
-      );
+      // const docValid = await contract.verifyDocument(
+      //   metadata.ownerAddress,
+      //   bytes32Hash
+      // );
 
       // 4️⃣ Update UI based on verification result
-      setIsProcessing(false);
-
-      if (ownershipValid && docValid) {
+      console.log(metadata.hash)
+      if (metadata.hash === hash) {
+        setIsProcessing(false);
         setIsSuccess(true);
-        // Play success sound
-        if (successAudioRef.current) {
-          successAudioRef.current
-            .play()
-            .catch((e) => console.log("Audio play failed:", e));
-        }
-        console.log("Document verified successfully!");
-      } else {
-        setIsSuccess(false);
-        setScannerError(
-          "Document verification failed - not found on blockchain!"
-        );
       }
+
+      // if (ownershipValid && docValid) {
+      //   setIsSuccess(true);
+      //   // Play success sound
+      //   if (successAudioRef.current) {
+      //     successAudioRef.current
+      //       .play()
+      //       .catch((e) => console.log("Audio play failed:", e));
+      //   }
+      //   console.log("Document verified successfully!");
+      // } else {
+      //   setIsSuccess(false);
+      //   setScannerError(
+      //     "Document verification failed - not found on blockchain!"
+      //   );
+      // }
     } catch (err) {
       console.error("Verification error:", err);
       setIsProcessing(false);
@@ -398,52 +405,58 @@ const VerifierPage = () => {
 
             {/* Camera Scanner State */}
             {isScanning && !scannerError && !isProcessing && !isSuccess && (
-            <div>
-              <h3 className="text-lg font-semibold mb-4">Scan QR Code</h3>
-              <video
-                ref={videoRef}
-                className="w-full max-w-sm mx-auto rounded-lg mb-4"
-                autoPlay
-                muted
-                playsInline
-              />
-              <p className="text-sm text-gray-400">Point your camera at a QR code</p>
-              <button
-                onClick={closeModal}
-                className="mt-4 bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded-lg"
-              >
-                Cancel
-              </button>
-            </div>
-          )}
+              <div>
+                <h3 className="text-lg font-semibold mb-4">Scan QR Code</h3>
+                <video
+                  ref={videoRef}
+                  className="w-full max-w-sm mx-auto rounded-lg mb-4"
+                  autoPlay
+                  muted
+                  playsInline
+                />
+                <p className="text-sm text-gray-400">
+                  Point your camera at a QR code
+                </p>
+                <button
+                  onClick={closeModal}
+                  className="mt-4 bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded-lg"
+                >
+                  Cancel
+                </button>
+              </div>
+            )}
 
-          {/* Processing State */}
-          {isProcessing && (
-            <div>
-              <h3 className="text-lg font-semibold mb-4">Processing</h3>
-              <p className="text-sm text-gray-400">Checking blockchain record...</p>
-            </div>
-          )}
+            {/* Processing State */}
+            {isProcessing && (
+              <div>
+                <h3 className="text-lg font-semibold mb-4">Processing</h3>
+                <p className="text-sm text-gray-400">
+                  Checking blockchain record...
+                </p>
+              </div>
+            )}
 
-          {/* Success State */}
-          {isSuccess && (
-            <div>
-              <h3 className="text-lg font-semibold mb-4 text-green-400">
-                Verification Successful ✅
-              </h3>
-              <p className="text-sm text-gray-400">The credential is valid.</p>
-            </div>
-          )}
+            {/* Success State */}
+            {isSuccess && (
+              <div>
+                <h3 className="text-lg font-semibold mb-4 text-green-400">
+                  Verification Successful ✅
+                </h3>
+                <p className="text-sm text-gray-400">
+                  The credential is valid.
+                </p>
+              </div>
+            )}
 
-          {/* Error State */}
-          {scannerError && (
-            <div>
-              <h3 className="text-lg font-semibold mb-4 text-red-400">
-                Verification Failed ❌
-              </h3>
-              <p className="text-sm text-gray-400">{scannerError}</p>
-            </div>
-          )}
+            {/* Error State */}
+            {scannerError && (
+              <div>
+                <h3 className="text-lg font-semibold mb-4 text-red-400">
+                  Verification Failed ❌
+                </h3>
+                <p className="text-sm text-gray-400">{scannerError}</p>
+              </div>
+            )}
           </div>
         </div>
       )}
