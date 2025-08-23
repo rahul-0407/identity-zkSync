@@ -65,10 +65,11 @@ const VerifierPage = () => {
           const qrData = result?.data?.trim() || result.trim();
           await logQRResult(qrData); // send to backend
           scannerRef.current.stop();
-          setIsScanning(false);
-          setIsProcessing(false);
-          setIsSuccess(true);
-          // await handleScanOrUpload(qrData);
+          // setIsScanning(false);
+          // setIsProcessing(false);
+          // setIsSuccess(true);
+          await handleScanOrUpload(qrData);
+          // scannerRef.current.stop();
         },
         {
           onDecodeError: (error) => {
