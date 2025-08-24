@@ -83,7 +83,7 @@ const Document = () => {
   }
 
   // Example usage
-  console.log(generateRandomGradient());
+  // console.log(generateRandomGradient());
   // Might output: "from-red-500 to-yellow-600"
 
   return (
@@ -101,7 +101,7 @@ const Document = () => {
               </div>
               <span className="absolute -bottom-0 left-[1.125rem] h-px w-[calc(100%-2.25rem)] bg-gradient-to-r from-emerald-400/0 via-emerald-400/90 to-emerald-400/0 transition-opacity duration-500 group-hover:opacity-40" />
             </div>
-            <h1 className=" bg-gradient-to-tl from-indigo-400 via-pink-100 to-gray-100 text-transparent bg-clip-text text-5xl md:text-6xl font-bold mb-6 ">
+            <h1 className=" bg-gradient-to-tl from-indigo-400 via-pink-100 to-gray-100 text-transparent bg-clip-text text-5xl md:text-6xl font-bold mb-6 leading-tight">
               Secure Your Digital Documents,
               <br />
               Verify Anywhere, Anytime

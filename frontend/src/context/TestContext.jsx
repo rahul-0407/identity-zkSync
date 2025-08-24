@@ -107,6 +107,7 @@ const TestContextProvider = ({ children }) => {
     localStorage.removeItem("address");
     localStorage.removeItem("userData");
     localStorage.removeItem("authToken");
+    location.reload(true);
   };
 
   // Updated: Load documents with authentication
@@ -247,7 +248,8 @@ const TestContextProvider = ({ children }) => {
     getDataFromChain,
     loadingChainData,
     chainDocuments,
-    removeDocument, // function to authenticate user
+    removeDocument,
+    disconnect // function to authenticate user
   };
 
   return <TestContext.Provider value={value}>{children}</TestContext.Provider>;

@@ -3,7 +3,7 @@ import { NavLink, Link } from "react-router-dom";
 import { TestContext } from "../context/TestContext";
 
 const Navbar = () => {
-  const { walletAddress, setWalletAddress,connect } = useContext(TestContext);
+  const { walletAddress, setWalletAddress,connect,disconnect } = useContext(TestContext);
 
   function shortAddress(addr) {
     return addr ? `${addr.slice(0, 5)}...${addr.slice(-3)}` : "";
@@ -41,7 +41,7 @@ const Navbar = () => {
           <button className="w-24 transform rounded-lg bg-black px-6 py-2 font-medium text-white transition-all duration-300  md:w-32 dark:bg-[rgba(79,82,255,0.92)] dark:hover:bg-[rgba(68,51,255)] dark:text-white  box dark text-center">
             {walletAddress ? shortAddress(walletAddress) : "Connect"}
           </button>{" "}
-          <button className="w-24 transform rounded-lg bg-black px-6 py-2 font-medium text-white transition-all duration-300 md:w-32 dark:bg-[rgba(79,82,255,0.92)] dark:hover:bg-[rgba(68,51,255)] dark:text-white  box dark">
+          <button onClick={disconnect} className="w-24 transform rounded-lg bg-black px-6 py-2 font-medium text-white transition-all duration-300 md:w-32 dark:bg-[rgba(79,82,255,0.92)] dark:hover:bg-[rgba(68,51,255)] dark:text-white  box dark">
             Disconnect
           </button>{" "}
         </div>
