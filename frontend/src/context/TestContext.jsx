@@ -134,6 +134,7 @@ const TestContextProvider = ({ children }) => {
       if (response.data.success) {
         setDocuments(response.data.documents);
       }
+      console.log(response.data);
     } catch (error) {
       console.error("Failed to load documents:", error);
     }
@@ -180,6 +181,7 @@ const TestContextProvider = ({ children }) => {
         timestamp: new Date(Number(doc.timestamp) * 1000).toLocaleString(),
         docHash: doc.docHash,
       }));
+      console.log(parsedDocs)
 
       setChainDocuments(parsedDocs);
     } catch (error) {
@@ -248,8 +250,7 @@ const TestContextProvider = ({ children }) => {
     getDataFromChain,
     loadingChainData,
     chainDocuments,
-    removeDocument,
-    disconnect // function to authenticate user
+    removeDocument, // function to authenticate user
   };
 
   return <TestContext.Provider value={value}>{children}</TestContext.Provider>;
