@@ -119,17 +119,7 @@ const TestContextProvider = ({ children }) => {
   const loadUserDocuments = async () => {
     try {
       // Option A: Use existing endpoint (if no auth required)
-      const response = await axios.get(
-        `${
-          import.meta.env.VITE_BACKEND_URL
-        }/api/auth/v1/documents/${walletAddress}`,
-        {
-          withCredentials: true,
-          headers: {
-            Accept: "application/json",
-          },
-        }
-      );
+      const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/auth/v1/documents/${walletAddress}`,{withCredentials: true,});
 
       if (response.data.success) {
         setDocuments(response.data.documents);
