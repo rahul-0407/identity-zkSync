@@ -63,7 +63,7 @@ export default function Self() {
         </p>
       </div>
 
-      <div className="rounded-md flex flex-col antialiased bg-white dark:bg-neutral-950 dark:bg-grid-white/[0.05] items-center justify-center relative overflow-hidden">
+      <div className="rounded-md flex flex-col antialiased  bg-neutral-950 bg-grid-white/[0.05] items-center justify-center relative overflow-hidden">
       <img/>
         {boxes.map((box, index) => (
           <Selfbox

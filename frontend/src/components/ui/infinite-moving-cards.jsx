@@ -77,13 +77,9 @@ export const InfiniteMovingCards = ({
           <li
             className={cn(
               "relative w-[459px] max-w-full shrink-0 rounded-2xl border border-b-0 border-zinc-200 px-[35px] py-[30px] md:w-[450px]",
-              // Light mode: Grid + linear gradient
-              "[background-image:linear-gradient(to_right,#e4e4e7_1px,transparent_1px),linear-gradient(to_bottom,#e4e4e7_1px,transparent_1px),linear-gradient(180deg,#fafafa,#f5f5f5)]",
-              "[background-size:40px_40px,40px_40px,auto]",
-              // ✅ Dark mode: Radial gradient on top of grid
-              "dark:[background-image:radial-gradient(91%_57%_at_14.9%_0%,rgb(28,27,83,0.9)_0%,rgba(15,11,0,0.85)_100%),linear-gradient(to_right,#262626_1px,transparent_1px),linear-gradient(to_bottom,#262626_1px,transparent_1px)]",
-              "dark:[background-size:auto,40px_40px,40px_40px]",
-              "dark:border-zinc-700"
+              "[background-image:radial-gradient(91%_57%_at_14.9%_0%,rgb(28,27,83,0.9)_0%,rgba(15,11,0,0.85)_100%),linear-gradient(to_right,#262626_1px,transparent_1px),linear-gradient(to_bottom,#262626_1px,transparent_1px)]",
+              "[background-size:auto,40px_40px,40px_40px]",
+              "border-zinc-700"
             )}
             key={item.name}
           >
@@ -99,10 +95,10 @@ export const InfiniteMovingCards = ({
 
               <div className="relative z-20 flex flex-row items-center">
                 <span className="flex flex-col ">
-                  <span className="text-sm leading-[1.6] font-bold text-neutral-500 dark:text-white">
+                  <span className="text-sm leading-[1.6] font-bold  text-white">
                     {item.name}
                   </span>
-                  <span className="text-sm leading-[1.6] font-normal text-neutral-500 dark:text-gray-400">
+                  <span className="text-sm leading-[1.6] font-normal  text-gray-400">
                     {item.title}
                   </span>
                 </span>
@@ -111,7 +107,7 @@ export const InfiniteMovingCards = ({
               </div>
 
               
-              <span className="relative z-20 text-sm leading-[1.6] font-normal text-neutral-800 dark:text-gray-300">
+              <span className="relative z-20 text-sm leading-[1.6] font-normal text-gray-300">
                 {item.quote}
               </span>
               

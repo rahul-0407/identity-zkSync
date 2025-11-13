@@ -14,7 +14,7 @@ export default function Client() {
           </div>
           <span className="absolute -bottom-0 left-[1.125rem] h-px w-[calc(100%-2.25rem)] bg-gradient-to-r from-emerald-400/0 via-emerald-400/90 to-emerald-400/0 transition-opacity duration-500 group-hover:opacity-40" />
         </div>
-        <h1 className="bg-gradient-to-tl from-indigo-400 via-pink-100 to-gray-100 text-transparent bg-clip-text  text-4xl text-6xl font-medium">
+        <h1 className="bg-gradient-to-tl from-indigo-400 via-pink-100 to-gray-100 text-transparent bg-clip-text   text-6xl font-medium">
           Our Clients
         </h1>
         <p className="text-center text-gray-400">
@@ -23,7 +23,7 @@ export default function Client() {
         </p>
       </div>
 
-      <div className="h-[40rem] rounded-md flex flex-col antialiased bg-white dark:bg-neutral-950 dark:bg-grid-white/[0.05] items-center justify-center relative overflow-hidden">
+      <div className="h-[40rem] rounded-md flex flex-col antialiased  bg-neutral-950 bg-grid-white/[0.05] items-center justify-center relative overflow-hidden">
         <InfiniteMovingCards
           items={testimonials1}
           direction="right"

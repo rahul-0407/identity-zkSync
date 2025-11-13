@@ -44,7 +44,7 @@ const VerificationHistory = () => {
           <select
             value={filter}
             onChange={e => setFilter(e.target.value)}
-            className="w-35 transform rounded-lg flex justify-evenly items-center bg-black px-6 py-2 font-medium text-black dark:text-white transition-all duration-300  hover:bg-gray-800 dark:bg-[rgba(79,82,255,0.92)] dark:hover:bg-[rgba(68,51,255)] box dark outline-0"
+            className="w-35 transform rounded-lg flex justify-evenly items-center  px-6 py-2 font-medium text-white transition-all duration-300   bg-[rgba(79,82,255,0.92)] hover:bg-[rgba(68,51,255)] box dark outline-0"
           >
             {FILTER_OPTIONS.map(opt => (
               <option key={opt.value} value={opt.value} className='p-6 border-0 rounded-lg outline-0'>{opt.label}</option>
@@ -54,7 +54,7 @@ const VerificationHistory = () => {
           <select
             value={sort}
             onChange={e => setSort(e.target.value)}
-            className="w-45 transform rounded-lg flex justify-evenly items-center bg-black px-6 py-2 font-medium text-black dark:text-white transition-all duration-300  hover:bg-gray-800 dark:bg-[rgba(79,82,255,0.92)] dark:hover:bg-[rgba(68,51,255)] box dark outline-0"
+            className="w-45 transform rounded-lg flex justify-evenly items-center  px-6 py-2 font-medium text-white transition-all duration-300   bg-[rgba(79,82,255,0.92)] hover:bg-[rgba(68,51,255)] box dark outline-0"
           >
             {SORT_OPTIONS.map(opt => (
               <option key={opt.value} value={opt.value}>{opt.label}</option>

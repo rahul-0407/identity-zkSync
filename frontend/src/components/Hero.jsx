@@ -26,7 +26,7 @@ function Hero() {
         {/* <Navbar connect={connect} walletAddress={walletAddress} /> */}
 
         <div className="px-4 py-10 md:py-20">
-          <h1 className="relative z-10 mx-auto max-w-4xl text-center text-2xl font-bold  md:text-4xl lg:text-7xl dark:text-slate-200">
+          <h1 className="relative z-10 mx-auto max-w-4xl text-center text-2xl font-bold  md:text-4xl lg:text-7xl text-slate-200">
             {"Secure Your Digital Self, Verify Anywhere, Anytime"
               .split(" ")
               .map((word, index) => (
@@ -56,7 +56,7 @@ function Hero() {
               duration: 0.3,
               delay: 0.8,
             }}
-            className="relative z-10 mx-auto max-w-xl py-4 text-center text-lg font-normal text-neutral-600 dark:text-neutral-400"
+            className="relative z-10 mx-auto max-w-xl py-4 text-center text-lg font-normal  text-neutral-400"
           >
             With self-sovereign identity, you control your data—securely verify,
             share, and prove who you are, anytime, anywhere, on-chain and on
@@ -77,14 +77,14 @@ function Hero() {
           >
             <button
               onClick={connect}
-              className="w-65 transform rounded-lg flex justify-evenly items-center bg-black px-6 py-2 font-medium text-black dark:text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-gray-800 dark:bg-[rgba(79,82,255,0.92)] dark:hover:bg-[rgba(68,51,255)] box dark"
+              className="w-65 transform rounded-lg flex justify-evenly items-center  px-6 py-2 font-medium text-white transition-all duration-300 hover:-translate-y-0.5  bg-[rgba(79,82,255,0.92)] hover:bg-[rgba(68,51,255)] box dark"
             >
               <MetamaskIcon style={{ width: 32, height: 32 }} />
               {walletAddress
                 ? `Connected: ${shortAddress(walletAddress)}`
                 : "Connect Metamask"}
             </button>
-            <button className="w-60 transform rounded-lg border border-gray-300 bg-white px-6 py-2 font-medium text-black transition-all duration-300 hover:-translate-y-0.5 hover:bg-gray-100 dark:border-gray-700 dark:bg-black dark:text-white dark:hover:bg-gray-900">
+            <button className="w-60 transform rounded-lg border   px-6 py-2 font-medium  transition-all duration-300 hover:-translate-y-0.5  border-gray-700 bg-black text-white hover:bg-gray-900">
               Contact Support
             </button>
           </motion.div>
@@ -118,11 +118,11 @@ function Hero() {
             duration: 0.5,
             ease: [0.4, 0.0, 0.2, 1],
           }}
-          className="text-2xl px-4 md:text-4xl lg:text-5xl font-bold text-neutral-700 dark:text-white max-w-4xl leading-relaxed lg:leading-snug text-center mx-auto "
+          className="text-2xl px-4 md:text-4xl lg:text-5xl font-bold text-neutral-700 text-white max-w-4xl leading-relaxed lg:leading-snug text-center mx-auto "
         >
           With insomnia, nothing&apos;s real. Everything is far away. Everything
           is a{" "}
-          <Highlight className="text-black dark:text-white">
+          <Highlight className="text-black text-white">
             copy, of a copy, of a copy.
           </Highlight>
         </motion.h1>
@@ -135,7 +135,7 @@ export default Hero;
 
 const Navbar = ({ connect, walletAddress }) => {
   return (
-    <nav className=" fixed top-0 left-0 z-500 flex w-full bg-[rgba(0,0,0,0)] items-center justify-between  border-b border-neutral-200 px-4 py-4 dark:border-neutral-800 backblur">
+    <nav className=" fixed top-0 left-0 z-500 flex w-full bg-[rgba(0,0,0,0)] items-center justify-between  border-b  px-4 py-4 border-neutral-800 backblur">
       <div className="flex items-center gap-2">
         <div className="size-7 rounded-full bg-gradient-to-br from-violet-500 to-pink-500" />
         <h1 className="text-base font-bold md:text-2xl text-white">
@@ -159,7 +159,7 @@ const Navbar = ({ connect, walletAddress }) => {
           <p>Terms of Use</p>
         </NavLink>
       </div>
-      <button className="w-24 transform rounded-lg bg-black px-6 py-2 font-medium text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-gray-800 md:w-32 dark:bg-[rgba(79,82,255,0.92)] dark:hover:bg-[rgba(68,51,255)] dark:text-white  box dark">
+      <button className="w-24 transform rounded-lg  px-6 py-2 font-medium  transition-all duration-300 hover:-translate-y-0.5  md:w-32 bg-[rgba(79,82,255,0.92)] hover:bg-[rgba(68,51,255)] text-white  box dark">
         {walletAddress ? walletAddress : "Connect"}
       </button>
     </nav>

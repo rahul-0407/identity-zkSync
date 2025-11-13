@@ -17,9 +17,6 @@ import {
   RefreshCw,
   Copy,
   Trash2Icon,
-  TrashIcon,
-  LucideTrash,
-  LucideTrash2,
 } from "lucide-react";
 
 const Document = () => {

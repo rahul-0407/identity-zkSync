@@ -14,7 +14,7 @@ const Selfbox = ({direction,title,body,icon,poster}) => {
         <p className="text-gray-300">
           {body}
         </p>
-        <button className="w-24 transform rounded-lg bg-black px-6 py-2 font-medium text-white transition-all duration-300 hover:bg-gray-800 md:w-35 dark:bg-[rgba(79,82,255,0.92)] dark:hover:bg-[rgba(68,51,255)] dark:text-white  box dark">
+        <button className="w-24 transform rounded-lg  px-6 py-2 font-medium  transition-all duration-300  md:w-35 bg-[rgba(79,82,255,0.92)] hover:bg-[rgba(68,51,255)] text-white  box dark">
         Read More
        </button>     
       </div>
